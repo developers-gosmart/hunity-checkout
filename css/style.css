@@ -1,0 +1,11 @@
+.color-primary {
+    --mdb--bg-opacity: 1;
+    background-color: rgba(4, 44, 71, var(--mdb--bg-opacity));
+}
+
+.text-small{
+    font-size: 0.8rem;
+}
+.border-top-modified{
+    border-top : #e0e0e0 1px solid
+}

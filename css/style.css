@@ -3,9 +3,35 @@
     background-color: rgba(4, 44, 71, var(--mdb--bg-opacity));
 }
 
+.ast-single-post {
+    text-decoration: underline;
+}
+
 .text-small{
     font-size: 0.8rem;
+    line-height: 25px;
 }
+
 .border-top-modified{
-    border-top : #e0e0e0 1px solid
+    border-top : #e0e0e07a 0.4px solid
+}
+.elementor-social-icon {
+    background-color: #FFFFFF2B;
+}
+
+.elementor-social-icon {
+    display: inline-block;
+    border-radius: 50%;
+    height: 40px;
+    width: 40px;
+}
+
+.elementor-icon{
+    padding: 12px;
+    margin: 0 6px;
+}
+
+.card-header{
+    background-color: #0255a3;
+    color: #ffffff;
 }

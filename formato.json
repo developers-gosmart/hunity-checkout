@@ -1,0 +1,81 @@
+{
+    "service":{
+       "typeService":""
+    },
+    "plan":{
+       "typePlan":""
+     },
+    "holder":{
+        "name":"RAMIRO",
+        "lastName":"RAFFAN",
+        "email":"RAMIRORAFFAN5@GMAIL.COM",
+        "birthdate":"07/23/1959",
+        "gender":"MALE",
+        "phone":"8135804877",
+        "address":"15806 COUNTRYBROOK ST",
+        "address2":"",
+        "city":"TAMPA",
+        "state":"FL",
+        "zipCode":"33624"     
+    },
+    "Dependent":{
+       "totalShow":"2",
+       "dependentOne":{
+          "name":"RAMIRO",
+          "lastName":"RAFFAN",
+          "relationship":"Titular/Holder",
+          "gender":"MALE",
+          "birthdate":"07/23/1959"
+       },
+       "dependentTwo":{
+          "name":"RAMIRO",
+          "lastName":"RAFFAN",
+          "relationship":"Titular/Holder",
+          "gender":"MALE",
+          "birthdate":"07/23/1959"
+       },
+       "dependentThree":{
+          "name":"RAMIRO",
+          "lastName":"RAFFAN",
+          "relationship":"Titular/Holder",
+          "gender":"MALE",
+          "birthdate":"07/23/1959"
+       },
+      "dependentFour":{
+          "name":"RAMIRO",
+          "lastName":"RAFFAN",
+          "relationship":"Titular/Holder",
+          "gender":"MALE",
+          "birthdate":"07/23/1959"
+       },
+       "dependentFive":{
+          "name":"RAMIRO",
+          "lastName":"RAFFAN",
+          "relationship":"Titular/Holder",
+          "gender":"MALE",
+          "birthdate":"07/23/1959"
+       }
+    },
+    "payment":{
+        "service": "Dental & Vision", 
+        "plan": "Individual", 
+        "billing_period": "month",
+        "coupon_code":"KHJJ562",
+        "coupon":"0.00",
+        "price":"399.00",
+        "fee":"0",
+        "amountDueToday":"399.00",
+        "billing Address":{
+            "flag": "0",
+            "address1": "",
+            "address2": "",
+            "city":"",
+            "state":"",
+            "zip":""
+        },
+        "agentName":"Glenda Lilian Morales Hernande",
+        "agentEmail":"glendamoralesinsurance@gmail.com"
+        
+     }
+   
+ }

@@ -32,6 +32,11 @@
         <link rel="stylesheet" href="css/mdb.min.css" />
         <!-- Custom styles -->
         <link rel="stylesheet" href="css/style.css" />
+        <!-- jquery -->
+        <script type="text/javascript" src="js/jquery-3.7.1.min.js"></script>
+       
+        
+        
     </head>
     <body>
         <header>
@@ -86,16 +91,18 @@
                                                 <div class="p-3 div-check-card-inside">
                                                     <div class="d-flex justify-content-lg-end">
                                                         <input
-                                                            class="float-end form-check-card"
+                                                            class="float-end form-check-card triggerRules"
                                                             type="radio"
-                                                            name="flexRadioDefault"
-                                                            id="flexRadioDefault1"
-                                                            checked
+                                                            name="service[typeService]"
+                                                            id="flexRadioService1"
+                                                            data-id="6"
+                                                            data-key="flexRadioService1"
+                                                            
                                                         />
                                                     </div>
                                                     <div class="d-flex flex-column justify-content-center align-items-center">
                                                         <br />
-                                                        <label class="form-check-label" for="flexRadioDefault1">
+                                                        <label class="form-check-label" for="flexRadioService1">
                                                             <i class="fas fa-tooth fa-xlg"></i>
                                                         </label>
                                                         <small class="text-checked mt-2">Dental & Vision</small>
@@ -108,15 +115,17 @@
                                                 <div class="p-3 div-check-card-inside">
                                                     <div class="d-flex justify-content-lg-end">
                                                         <input
-                                                            class="float-end form-check-card"
+                                                            class="float-end form-check-card triggerRules"
                                                             type="radio"
-                                                            name="flexRadioDefault"
-                                                            id="flexRadioDefault1"
+                                                            name="service[typeService]"
+                                                            id="flexRadioService2"
+                                                            data-id="7"
+                                                            data-key="flexRadioService2"
                                                         />
                                                     </div>
                                                     <div class="d-flex flex-column justify-content-center align-items-center">
                                                         <br />
-                                                        <label class="form-check-label" for="flexRadioDefault1">
+                                                        <label class="form-check-label" for="flexRadioService2">
                                                             <i class="fas fa-heartbeat fa-xlg"></i>
                                                         </label>
                                                         <small class="text-checked mt-2">Total Health</small>
@@ -129,15 +138,17 @@
                                                 <div class="p-3 div-check-card-inside">
                                                     <div class="d-flex justify-content-lg-end">
                                                         <input
-                                                            class="float-end form-check-card"
+                                                            class="float-end form-check-card triggerRules"
                                                             type="radio"
-                                                            name="flexRadioDefault"
-                                                            id="flexRadioDefault1"
+                                                            name="service[typeService]"
+                                                            id="flexRadioService3"
+                                                            data-id="8"
+                                                            data-key="flexRadioService3"
                                                         />
                                                     </div>
                                                     <div class="d-flex flex-column justify-content-center align-items-center">
                                                         <br />
-                                                        <label class="form-check-label" for="flexRadioDefault1">
+                                                        <label class="form-check-label" for="flexRadioService3">
                                                             <i class="fas fa-dog fa-xlg"></i>
                                                         </label>
                                                         <small class="text-checked mt-2">PetVet</small>
@@ -165,9 +176,9 @@
                                                         <input
                                                             class="form-check-card"
                                                             type="radio"
-                                                            name="radioChoseLevel"
+                                                            name="plan[typePlan]"
                                                             id="radioChoseLevel1"
-                                                            checked
+                                                            
                                                         />
                                                     </div>
                                                     <div class="d-flex flex-column justify-content-center align-items-center">
@@ -187,9 +198,9 @@
                                                         <input
                                                             class="form-check-card"
                                                             type="radio"
-                                                            name="radioChoseLevel"
+                                                            name="plan[typePlan]"
                                                             id="radioChoseLevel2"
-                                                            checked
+                                                            
                                                         />
                                                     </div>
                                                     <div class="d-flex flex-column justify-content-center align-items-center">
@@ -209,9 +220,9 @@
                                                         <input
                                                             class="form-check-card"
                                                             type="radio"
-                                                            name="radioChoseLevel"
+                                                            name="plan[typePlan]"
                                                             id="radioChoseLevel3"
-                                                            checked
+                                                            
                                                         />
                                                     </div>
                                                     <div class="d-flex flex-column justify-content-center align-items-center">
@@ -274,9 +285,9 @@
                                                 aria-placeholder="Gender"
                                             >
                                                 <option selected>Gender</option>
-                                                <option value="1">One</option>
-                                                <option value="2">Two</option>
-                                                <option value="3">Three</option>
+                                                <option value="1">Male</option>
+                                                <option value="2">Female</option>
+                                               
                                             </select>
                                         </div>
 
@@ -319,14 +330,12 @@
                                         </div>
                                         <div class="col-md-4 mb-3">
                                             <select
-                                                class="form-select form-select-lg mb-3"
+                                                class="form-select form-select-lg mb-3 strState"
                                                 aria-label=".form-select-lg example"
                                                 aria-placeholder="State"
                                             >
                                                 <option selected>State</option>
-                                                <option value="1">One</option>
-                                                <option value="2">Two</option>
-                                                <option value="3">Three</option>
+                                                
                                             </select>
                                         </div>
                                         <div class="col-md-4 mb-3">
@@ -661,5 +670,6 @@
         <!-- Custom scripts -->
         <script src="https://www.google.com/recaptcha/api.js"></script>
         <script type="text/javascript" src="js/script.js"></script>
+        
     </body>
 </html>

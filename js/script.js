@@ -90,7 +90,7 @@ const assignDatepicker = () => {
     fechaMaxima.setFullYear(fechaMaxima.getFullYear() - 75);
 
 
-    $(".  ").datepicker({
+    $(".datepicker").datepicker({
         maxDate: fechaMaxima,
         dateFormat: "mm-dd-yyyy"
     }); 
@@ -119,7 +119,7 @@ function eventTrigger() {
   );
   triggerElementsCheckbox.forEach((element) => {
     element.addEventListener("click", function () {
-      getRules(this.id, this.checked == true ? "checked" : "unchecked");
+      getRules(this.id, this.checked == true ? this.value : "");
     });
   });
 
@@ -191,24 +191,23 @@ async function getPlans(id) {
 function getRules(id, value = "") {
   let idPlan = getIdPlan();
 
-  console.log("ID: " + id);
-  console.log("value: " + value);
+  // console.log("ID: " + id);
+  // console.log("value: " + value);
 
   let planString = idPlan !== 0 ? `&id_plan=${idPlan}` : "";
 
-  console.log('${server}/ws/wizard/getrules?key=${id}&value=${value}${planString}');
+  console.log(`${server}/ws/wizard/getrules?key=${id}&value=${value}${planString}`);
 
   console.log('key', id);
   console.log('value', value);
-  console.log('plan',planString);
-  
+  console.log('plan',planString); 
 
 
 
   fetch(`${server}/ws/wizard/getrules?key=${id}&value=${value}${planString}`)
     .then((response) => response.json())
     .then((response) => {
-      const rules = response.data;
+      const rules = response.data; 
       rules.forEach((rule) => {
         console.log("rule.affected >>> ", rule);
         const elementById =
@@ -230,9 +229,16 @@ function getRules(id, value = "") {
             elementById.value = dataRule === "parent.value" ? value : dataRule;
           break;
           case "display":
-            const divs = document.querySelectorAll(`.${rule.affected}`);
-            divs.forEach((div) => {
+            const divs = document.querySelectorAll(`.${rule.affected}`);           
+            divs.forEach((div) => { 
               div.style.display = value == "Yes" ? "block" : "none";
+            });
+          break;
+          case "hidden":
+            const divs_h = document.querySelectorAll(`.${rule.affected}`);           
+            divs_h.forEach((div) => {
+              console.log(div);
+              div.style.display = value == "Yes" ? "none" : "block";
             });
           break;
           case "copy":
@@ -334,27 +340,51 @@ async function getListPlans(){
   // Obtines el id del servicio
   let idService = getIdService();
 
-  console.log('serviceid',idService)
+  // console.log('serviceid',idService)
   // Obtienes los planes asociados a ese servicio
   plans = await getPlans(idService);
-  console.log("planes",plans);
+  // console.log("planes",plans);
   // Establece en el HTML el atributo data-id con los id_plan
   // en cada radiolevel (a nivel de bd los planes)
   setAttributeRadioLevel(plans);
-
- 
-
-
-
-
+  putServiceSummary(idService)
 }
 
+
+function putServiceSummary(service){ 
+ 
+  let iconService = document.getElementById('icon-service'), textService = document.getElementById('text-service'); 
+   iconService.innerHTML = '',textService.innerHTML = '' ; 
+   iconService.style.backgroundColor = '#f2f2f2';
+ 
+  let icono = document.createElement("i");
+   if(service == '6'){   
+     icono.className = "fas fa-tooth p-2"; 
+     textService.innerHTML = 'Dental & Vision'; 
+     iconService.appendChild(icono);
+   }
+ 
+   if(service == '7'){   
+     icono.className = "fas fa-dog p-2"; 
+     textService.innerHTML = 'Total Health';
+     iconService.appendChild(icono);
+   }
+ 
+ 
+   if(service == '8'){   
+     icono.className = "fas fa-heartbeat p-2"; 
+     textService.innerHTML = 'PetVet';
+     iconService.appendChild(icono);
+   }
+  
+ }
+
 function setAttributeRadioLevel(plans){
+    let planName = '';
      // Establece en el HTML el atributo data-id con los id_plan
       if(plans[0].name ==='Individual'){   
       const individual = document.getElementById('radioChoseLevel1');
       individual.setAttribute('data-id', plans[0].id);
-  
       }
 
       if(plans[1].name==='Couple'){
@@ -366,7 +396,137 @@ function setAttributeRadioLevel(plans){
       if(plans[2].name==='Family'){
           const family = document.getElementById('radioChoseLevel3');
           family.setAttribute('data-id', plans[2].id);
+          addDependents()
       }
+      console.log(plans);
+      // putPlanSummary(planName)
 }
+
+
+function putPlanSummary(plan){ 
+ 
+  let iconPlan = document.getElementById('icon-plan'), textPlan = document.getElementById('text-plan'); 
+   iconPlan.innerHTML = '',textPlan.innerHTML = '' ; 
+   iconPlan.style.backgroundColor = '#f2f2f2';
+ console.log(plan);
+  let iconoDos = document.createElement("i");
+   if(plan == 'Individual'){   
+     iconoDos.className = "fas fa-user p-2"; 
+     textPlan.innerHTML = plan; 
+     iconPlan.appendChild(iconoDos);
+   }
+ 
+   if(plan == 'Couple'){   
+     iconoDos.className = "fas fa-user-friends p-2"; 
+     textPlan.innerHTML = plan;
+     iconPlan.appendChild(iconoDos);
+   }
+ 
+ 
+   if(plan == 'Family'){   
+     iconoDos.className = "fas fa-users p-2"; 
+     textPlan.innerHTML = plan;
+     iconPlan.appendChild(iconoDos);
+   }
+  
+}
+
+function addDependents(){
+  var itemTemplate = document.querySelector('.example-template').cloneNode(true);
+  var editArea = document.querySelector('.edit-area');
+  var rowArea = document.querySelector('.row-area');
+  var itemNumber = 2;
+
+  document.addEventListener('click', function(event) {
+      if (event.target.matches('.edit-area .add')) {
+          var item = itemTemplate.cloneNode(true);
+          var inputs = item.querySelectorAll('[name]');
+        
+          inputs.forEach(function(input) {
+            var nameArray = input.name.split("[")
+            nameArray[1] = nameArray[1].replace("One", intToEnglish(itemNumber))           
+            input.name = nameArray[0] + '[' + nameArray[1] + '[' + nameArray[2];
+           
+          });
+          
+          itemNumber++; 
+          console.log(item);
+          rowArea.appendChild(item);
+      }
+
+      if (event.target.matches('.edit-area .rem')) {
+          var lastItem = editArea.querySelector('.example-template:last-child');
+          if (lastItem) {
+              editArea.removeChild(lastItem);
+          }
+      }
+
+      if (event.target.matches('.row-area .del')) {
+          var row = event.target.closest('.example-template');
+          if (row) {
+              row.remove();
+          }
+      }
+  });
+}
+
+function intToEnglish(number) {
+
+  var NS = [ 
+    { value: 1000, str: "Thousand" },
+    { value: 100, str: "Hundred" },
+    { value: 90, str: "Ninety" },
+    { value: 80, str: "Eighty" },
+    { value: 70, str: "Seventy" },
+    { value: 60, str: "Sixty" },
+    { value: 50, str: "Fifty" },
+    { value: 40, str: "Forty" },
+    { value: 30, str: "Thirty" },
+    { value: 20, str: "Twenty" },
+    { value: 19, str: "Nineteen" },
+    { value: 18, str: "Eighteen" },
+    { value: 17, str: "Seventeen" },
+    { value: 16, str: "Sixteen" },
+    { value: 15, str: "Fifteen" },
+    { value: 14, str: "Fourteen" },
+    { value: 13, str: "Thirteen" },
+    { value: 12, str: "Twelve" },
+    { value: 11, str: "Eleven" },
+    { value: 10, str: "Ten" },
+    { value: 9, str: "Nine" },
+    { value: 8, str: "Eight" },
+    { value: 7, str: "Seven" },
+    { value: 6, str: "Six" },
+    { value: 5, str: "Five" },
+    { value: 4, str: "Four" },
+    { value: 3, str: "Three" },
+    { value: 2, str: "Two" },
+    { value: 1, str: "One" }
+  ];
+
+  var result = '';
+  for (var n of NS) {
+    if (number >= n.value) {
+      if (number <= 99) {
+        result += n.str;
+        number -= n.value;
+        if (number > 0) result += ' ';
+      } else {
+        var t = Math.floor(number / n.value);
+        // console.log(t);
+        var d = number % n.value;
+        if (d > 0) {
+          return intToEnglish(t) + ' ' + n.str + ' ' + intToEnglish(d);
+        } else {
+          return intToEnglish(t) + ' ' + n.str;
+        }
+
+      }
+    }
+  }
+  return result;
+}
+
+
 
 

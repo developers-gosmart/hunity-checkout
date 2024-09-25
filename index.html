@@ -100,6 +100,8 @@
                                                             id="flexRadioService1"
                                                             data-id="6"
                                                             data-key="flexRadioService1"
+                                                            data-icon="fas fa-tooth"
+                                                            data-label="Dental & Vision"
                                                         />
                                                     </div>
                                                     <div class="d-flex flex-column justify-content-center align-items-center">
@@ -123,6 +125,8 @@
                                                             id="flexRadioService2"
                                                             data-id="7"
                                                             data-key="flexRadioService2"
+                                                            data-icon="fas fa-heartbeat"
+                                                            data-label="Total Health"
                                                         />
                                                     </div>
                                                     <div class="d-flex flex-column justify-content-center align-items-center">
@@ -146,6 +150,8 @@
                                                             id="flexRadioService3"
                                                             data-id="8"
                                                             data-key="flexRadioService3"
+                                                            data-icon="fas fa-dog"
+                                                            data-label="PetVet"
                                                         />
                                                     </div>
                                                     <div class="d-flex flex-column justify-content-center align-items-center">
@@ -176,12 +182,14 @@
                                                 <div class="p-3 div-check-card-inside">
                                                     <div class="d-flex justify-content-lg-end">
                                                         <input
-                                                            class="form-check-card triggerRules"
+                                                            class="form-check-card triggerRules radioLevel"
                                                             type="radio"
                                                             name="plan[typePlan]"
                                                             id="radioChoseLevel1"
                                                             data-key="radioChoseLevel1"
                                                             value="Yes"
+                                                            data-icon="fas fa-user"
+                                                            data-label="Individual"
                                                         />
                                                     </div>
                                                     <div class="d-flex flex-column justify-content-center align-items-center">
@@ -199,12 +207,14 @@
                                                 <div class="p-3 div-check-card-inside">
                                                     <div class="d-flex justify-content-lg-end">
                                                         <input
-                                                            class="form-check-card triggerRules"
+                                                            class="form-check-card triggerRules radioLevel"
                                                             type="radio"
                                                             name="plan[typePlan]"
                                                             id="radioChoseLevel2"
                                                             data-key="radioChoseLevel2"
                                                             value="Yes"
+                                                            data-icon="fas fa-user-friends"
+                                                            data-label="Couple"
                                                         />
                                                     </div>
                                                     <div class="d-flex flex-column justify-content-center align-items-center">
@@ -222,12 +232,14 @@
                                                 <div class="p-3 div-check-card-inside">
                                                     <div class="d-flex justify-content-lg-end">
                                                         <input
-                                                            class="form-check-card triggerRules"
+                                                            class="form-check-card triggerRules radioLevel"
                                                             type="radio"
                                                             name="plan[typePlan]"
                                                             id="radioChoseLevel3"
                                                             data-key="radioChoseLevel3"
                                                             value="Yes"
+                                                            data-icon="fas fa-users"
+                                                            data-label="Family"
                                                         />
                                                     </div>
                                                     <div class="d-flex flex-column justify-content-center align-items-center">
@@ -401,12 +413,11 @@
                                                     <select
                                                         id="formRelationship"
                                                         name="dependent[dependentOne[relationship]]"
-                                                        class="form-select form-select-lg"
+                                                        class="form-select form-select-lg getRelationShips"
                                                         aria-label="form-select-lg example"
                                                         aria-placeholder="Relationship"
                                                     >
                                                         <option selected>Relationship</option>
-                                                        <option value="Spouse">Spouse</option>
                                                     </select>
                                                 </div>
                                                 <div class="col-md-4 mb-3">
@@ -678,7 +689,12 @@
                                         <b class="text-normal"><i class="fas fa-percentage"></i> Have a coupon?</b>
                                     </div>
                                     <div class="input-group mt-3 mb-4">
-                                        <input type="text" class="form-control border" name="" placeholder="Enter cupon code" />
+                                        <input
+                                            type="text"
+                                            class="form-control border"
+                                            name="payment[couponCode]"
+                                            placeholder="Enter cupon code"
+                                        />
                                         <button class="btn btn-light text-primary border">Apply</button>
                                     </div>
                                 </div>
@@ -686,18 +702,35 @@
                                     <div class="btn-group">
                                         <input
                                             type="radio"
-                                            class="btn-check"
-                                            name="options"
+                                            class="btn-check triggerRules"
+                                            name="payment[billingPeriod]"
                                             id="option1"
                                             autocomplete="off"
-                                            checked
+                                            data-key="optionPrice1"
+                                            value="1"
                                         />
                                         <label class="btn btn-secondary" for="option1" data-mdb-ripple-init>Monthly</label>
 
-                                        <input type="radio" class="btn-check" name="options" id="option2" autocomplete="off" />
+                                        <input
+                                            type="radio"
+                                            class="btn-check triggerRules"
+                                            name="payment[billingPeriod]"
+                                            id="option2"
+                                            data-key="optionPrice2"
+                                            autocomplete="off"
+                                            value="6"
+                                        />
                                         <label class="btn btn-secondary" for="option2" data-mdb-ripple-init>Annual</label>
 
-                                        <input type="radio" class="btn-check" name="options" id="option3" autocomplete="off" />
+                                        <input
+                                            type="radio"
+                                            class="btn-check triggerRules"
+                                            name="payment[billingPeriod]"
+                                            id="option3"
+                                            data-key="optionPrice3"
+                                            autocomplete="off"
+                                            value="14"
+                                        />
                                         <label class="btn btn-secondary" for="option3" data-mdb-ripple-init>2 Years</label>
                                     </div>
                                 </div>
@@ -707,13 +740,18 @@
                                             One-Time Enrollment Fee
                                             <i class="fas fa-exclamation-circle"></i>
                                         </p>
-                                        <p class="mb-2 text-dark text-small fw-bold">$20.00</p>
+                                        <p class="mb-2 text-dark text-small fw-bold price-fee">
+                                            $
+                                            <input type="text" value="0" name="payment[fee]" class="input-payment" />
+                                        </p>
                                     </div>
                                     <div class="d-flex justify-content-between">
                                         <p class="mb-2 text-checked text-small fw-bold">
                                             Recurring Cost <i class="fas fa-exclamation-circle"></i>
                                         </p>
-                                        <p class="mb-2 text-dark text-small fw-bold">$9.95/month</p>
+                                        <p class="mb-2 text-dark text-small fw-bold price">
+                                            $<input type="text" value="0" name="payment[price]" class="input-payment" />/month
+                                        </p>
                                     </div>
                                     <hr />
                                 </div>
@@ -721,7 +759,11 @@
                             <div class="card-footer color-primary text-muted">
                                 <div class="d-flex justify-content-between">
                                     <p class="mb-2 text-white text-small">Plan Total Today:</p>
-                                    <p class="mb-2 fw-bold text-white">$149.90</p>
+                                    <p class="mb-2 fw-bold text-white total-price">
+                                        $<input type="text" value="0" name="payment[amountDueToday]" class="input-payment-0" />
+                                    </p>
+                                    <input type="hidden" name="payment[coupon]" />
+                                    <input type="hidden" name="payment[nextPayment]" />
                                 </div>
                             </div>
                         </div>
@@ -851,6 +893,7 @@
         <!--bootstrap-datepicker  -->
         <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js"></script>
         <!-- Custom scripts -->
+        <script type="text/javascript" src="js/jquery.serializejson.js"></script>
         <script type="text/javascript" src="js/script.js"></script>
     </body>
 </html>

@@ -191,3 +191,26 @@
     width: 2rem;
     height: 2rem;
 }
+
+.div-card-icon > .icon-plan{
+    padding: 8px;
+}
+
+.input-payment{
+    display: inline;
+    border: none;
+    outline: none;
+    background-color: transparent;
+    width: 45px;
+    font-weight: 600;
+}
+
+.input-payment-0{
+    display: inline;
+    border: none;
+    outline: none;
+    background-color: transparent;
+    width: 50px;
+    font-weight: 600;
+    color: #fff;;
+}

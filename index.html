@@ -28,15 +28,18 @@
             rel="stylesheet"
         />
         <link rel="icon" href="/images/faviconV2.png" type="image/x-icon" />
+
         <!-- MDB -->
         <link rel="stylesheet" href="css/mdb.min.css" />
         <!-- Custom styles -->
         <link rel="stylesheet" href="css/style.css" />
+        <!--bootstrap-datepicker  -->
+        <link
+            rel="stylesheet"
+            href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/css/bootstrap-datepicker.min.css"
+        />
         <!-- jquery -->
         <script type="text/javascript" src="js/jquery-3.7.1.min.js"></script>
-       
-        
-        
     </head>
     <body>
         <header>
@@ -97,7 +100,8 @@
                                                             id="flexRadioService1"
                                                             data-id="6"
                                                             data-key="flexRadioService1"
-                                                            
+                                                            data-icon="fas fa-tooth"
+                                                            data-label="Dental & Vision"
                                                         />
                                                     </div>
                                                     <div class="d-flex flex-column justify-content-center align-items-center">
@@ -121,6 +125,8 @@
                                                             id="flexRadioService2"
                                                             data-id="7"
                                                             data-key="flexRadioService2"
+                                                            data-icon="fas fa-heartbeat"
+                                                            data-label="Total Health"
                                                         />
                                                     </div>
                                                     <div class="d-flex flex-column justify-content-center align-items-center">
@@ -144,6 +150,8 @@
                                                             id="flexRadioService3"
                                                             data-id="8"
                                                             data-key="flexRadioService3"
+                                                            data-icon="fas fa-dog"
+                                                            data-label="PetVet"
                                                         />
                                                     </div>
                                                     <div class="d-flex flex-column justify-content-center align-items-center">
@@ -174,11 +182,14 @@
                                                 <div class="p-3 div-check-card-inside">
                                                     <div class="d-flex justify-content-lg-end">
                                                         <input
-                                                            class="form-check-card"
+                                                            class="form-check-card triggerRules radioLevel"
                                                             type="radio"
                                                             name="plan[typePlan]"
                                                             id="radioChoseLevel1"
-                                                            
+                                                            data-key="radioChoseLevel1"
+                                                            value="Yes"
+                                                            data-icon="fas fa-user"
+                                                            data-label="Individual"
                                                         />
                                                     </div>
                                                     <div class="d-flex flex-column justify-content-center align-items-center">
@@ -196,11 +207,14 @@
                                                 <div class="p-3 div-check-card-inside">
                                                     <div class="d-flex justify-content-lg-end">
                                                         <input
-                                                            class="form-check-card"
+                                                            class="form-check-card triggerRules radioLevel"
                                                             type="radio"
                                                             name="plan[typePlan]"
                                                             id="radioChoseLevel2"
-                                                            
+                                                            data-key="radioChoseLevel2"
+                                                            value="Yes"
+                                                            data-icon="fas fa-user-friends"
+                                                            data-label="Couple"
                                                         />
                                                     </div>
                                                     <div class="d-flex flex-column justify-content-center align-items-center">
@@ -218,11 +232,14 @@
                                                 <div class="p-3 div-check-card-inside">
                                                     <div class="d-flex justify-content-lg-end">
                                                         <input
-                                                            class="form-check-card"
+                                                            class="form-check-card triggerRules radioLevel"
                                                             type="radio"
                                                             name="plan[typePlan]"
                                                             id="radioChoseLevel3"
-                                                            
+                                                            data-key="radioChoseLevel3"
+                                                            value="Yes"
+                                                            data-icon="fas fa-users"
+                                                            data-label="Family"
                                                         />
                                                     </div>
                                                     <div class="d-flex flex-column justify-content-center align-items-center">
@@ -247,6 +264,7 @@
                                             <input
                                                 type="text"
                                                 id="form6Example1"
+                                                name="holder[name]"
                                                 class="form-control form-control-lg"
                                                 placeholder="First name"
                                             />
@@ -255,6 +273,7 @@
                                             <input
                                                 type="text"
                                                 id="form6Example1"
+                                                name="holder[lastName]"
                                                 class="form-control form-control-lg"
                                                 placeholder="Last name"
                                             />
@@ -264,6 +283,7 @@
                                             <input
                                                 type="email"
                                                 id="form6Example1"
+                                                name="holder[email]"
                                                 class="form-control form-control-lg"
                                                 placeholder="Email"
                                             />
@@ -271,15 +291,17 @@
 
                                         <div class="col-md-6 mb-3">
                                             <input
-                                                type="date"
+                                                type="text"
                                                 id="form6Example1"
-                                                class="form-control form-control-lg"
+                                                name="holder[birthdate]"
+                                                class="form-control form-control-lg datepicker"
                                                 placeholder="Date of Birth"
                                             />
                                         </div>
 
                                         <div class="col-md-6 mb-3">
                                             <select
+                                                name="holder[gender]"
                                                 class="form-select form-select-lg"
                                                 aria-label="form-select-lg example"
                                                 aria-placeholder="Gender"
@@ -287,7 +309,6 @@
                                                 <option selected>Gender</option>
                                                 <option value="1">Male</option>
                                                 <option value="2">Female</option>
-                                               
                                             </select>
                                         </div>
 
@@ -295,6 +316,7 @@
                                             <input
                                                 type="tel"
                                                 id="form6Example1"
+                                                name="holder[phone]"
                                                 class="form-control form-control-lg"
                                                 placeholder="Phone"
                                             />
@@ -308,6 +330,7 @@
                                             <input
                                                 type="text"
                                                 id="form6Example1"
+                                                name="holder[address]"
                                                 class="form-control form-control-lg"
                                                 placeholder="Address 1"
                                             />
@@ -316,6 +339,7 @@
                                             <input
                                                 type="text"
                                                 id="form6Example1"
+                                                name="holder[address2]"
                                                 class="form-control form-control-lg"
                                                 placeholder="Address 2"
                                             />
@@ -324,27 +348,119 @@
                                             <input
                                                 type="text"
                                                 id="form6Example1"
+                                                name="holder[city]"
                                                 class="form-control form-control-lg"
                                                 placeholder="Enter City"
                                             />
                                         </div>
                                         <div class="col-md-4 mb-3">
                                             <select
+                                                name="holder[state]"
                                                 class="form-select form-select-lg mb-3 strState"
                                                 aria-label=".form-select-lg example"
                                                 aria-placeholder="State"
                                             >
                                                 <option selected>State</option>
-                                                
                                             </select>
                                         </div>
                                         <div class="col-md-4 mb-3">
                                             <input
                                                 type="text"
                                                 id="form6Example1"
+                                                name="holder[zipCode]"
                                                 class="form-control form-control-lg"
                                                 placeholder="Zip Code"
                                             />
+                                        </div>
+                                    </div>
+                                    <div
+                                        class="card border shadow-0 color-secondary my-3 p-3 display_hidden divDependent"
+                                        data-key="divDependent"
+                                    >
+                                        <div class="card-title text-primary-o">
+                                            <b class="text-normal">Dependent(s)</b>
+                                        </div>
+                                        <div class="card-body">
+                                            <div class="row example-template">
+                                                <div class="col-md-10 divRowArea"></div>
+                                                <div class="col-md-2 mb-3 divRowArea">
+                                                    <button type="button" class="btn btn-light btn-sm del my-2">
+                                                        <span class="text-danger del">Delete </span>
+                                                        <i class="fas fa-trash text-danger del"></i>
+                                                    </button>
+                                                </div>
+
+                                                <div class="col-md-6 mb-3">
+                                                    <input
+                                                        type="text"
+                                                        id="formFirstName"
+                                                        name="dependent[dependentOne[name]]"
+                                                        class="form-control form-control-lg"
+                                                        placeholder="First name"
+                                                    />
+                                                </div>
+                                                <div class="col-md-6 mb-3">
+                                                    <input
+                                                        type="text"
+                                                        id="formLastName"
+                                                        name="dependent[dependentOne[lastName]]"
+                                                        class="form-control form-control-lg"
+                                                        placeholder="Last name"
+                                                    />
+                                                </div>
+
+                                                <div class="col-md-4 mb-3">
+                                                    <select
+                                                        id="formRelationship"
+                                                        name="dependent[dependentOne[relationship]]"
+                                                        class="form-select form-select-lg getRelationShips"
+                                                        aria-label="form-select-lg example"
+                                                        aria-placeholder="Relationship"
+                                                    >
+                                                        <option selected>Relationship</option>
+                                                    </select>
+                                                </div>
+                                                <div class="col-md-4 mb-3">
+                                                    <select
+                                                        id="formGender"
+                                                        name="dependent[dependentOne[gender]]"
+                                                        class="form-select form-select-lg"
+                                                        aria-label="form-select-lg example"
+                                                        aria-placeholder="Gender"
+                                                    >
+                                                        <option selected>Gender</option>
+                                                        <option value="1">Male</option>
+                                                        <option value="2">Female</option>
+                                                    </select>
+                                                </div>
+                                                <div class="col-md-4 mb-3">
+                                                    <input
+                                                        type="text"
+                                                        id="formDateOfBirth"
+                                                        name="dependent[dependentOne[birthdate]]"
+                                                        class="form-control form-control-lg datepicker"
+                                                        placeholder="Date of Birth"
+                                                    />
+                                                </div>
+                                                <hr />
+                                            </div>
+                                            <div class="row-area my-2 display_hidden divRowArea" data-key="divRowArea"></div>
+                                        </div>
+                                        <div class="card-footer display_hidden divEditArea" data-key="divEditArea">
+                                            <div class="d-flex justify-content-lg-end">
+                                                <div class="edit-area">
+                                                    <div class="controls">
+                                                        <button
+                                                            type="button"
+                                                            id="btnRepeatDepends"
+                                                            class="btn btn-secondary btn-rounded add"
+                                                            data-mdb-ripple-init
+                                                        >
+                                                            Add Dependent +
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -358,6 +474,7 @@
                                             <input
                                                 type="text"
                                                 id="form6Example1"
+                                                name="holder[nameOnCard]"
                                                 class="form-control form-control-lg"
                                                 placeholder="Name On The Card"
                                             />
@@ -371,6 +488,7 @@
                                                 <input
                                                     type="text"
                                                     id="form6Example1"
+                                                    name="holder[cardNumber]"
                                                     class="form-control form-control-lg"
                                                     placeholder="Card Number"
                                                 />
@@ -381,7 +499,8 @@
                                             <input
                                                 type="text"
                                                 id="form6Example1"
-                                                class="form-control form-control-lg"
+                                                name="holder[dateExpiration]"
+                                                class="form-control form-control-lg datepicker"
                                                 placeholder="MM/YY"
                                             />
                                         </div>
@@ -389,29 +508,106 @@
                                             <input
                                                 type="text"
                                                 id="form6Example1"
+                                                name="holder[cvv]"
                                                 class="form-control form-control-lg"
                                                 placeholder="CVV"
                                             />
                                         </div>
                                         <div class="col-md-12">
                                             <div class="form-check mb-3">
-                                                <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault1" />
+                                                <input
+                                                    class="form-check-input triggerRules"
+                                                    type="checkbox"
+                                                    value="Yes"
+                                                    id="flexCheckDefault1"
+                                                    data-key="flexCheckDefault1"
+                                                />
                                                 <label class="form-check-label text-primary" for="flexCheckDefault1"
                                                     >Different billing address</label
                                                 >
                                             </div>
 
+                                            <div
+                                                class="card border shadow-0 color-secondary my-3 p-3 display_hidden divBillingAddress"
+                                                data-key="divBillingAddress"
+                                            >
+                                                <div class="card-title text-primary-o">
+                                                    <b class="text-normal">Billing Address</b>
+                                                </div>
+                                                <div class="card-body">
+                                                    <input type="hidden" name="billing_address[flag]" value="0" />
+                                                    <div class="row">
+                                                        <div class="col-md-6 mb-3">
+                                                            <input
+                                                                type="text"
+                                                                id="form6Example1"
+                                                                name="billing_address[address]"
+                                                                class="form-control form-control-lg"
+                                                                placeholder="Address 1"
+                                                            />
+                                                        </div>
+                                                        <div class="col-md-6 mb-3">
+                                                            <input
+                                                                type="text"
+                                                                id="form6Example1"
+                                                                name="billing_address[address2]"
+                                                                class="form-control form-control-lg"
+                                                                placeholder="Address 2"
+                                                            />
+                                                        </div>
+                                                        <div class="col-md-4 mb-3">
+                                                            <input
+                                                                type="text"
+                                                                id="form6Example1"
+                                                                name="billing_address[city]"
+                                                                class="form-control form-control-lg"
+                                                                placeholder="Enter City"
+                                                            />
+                                                        </div>
+                                                        <div class="col-md-4 mb-3">
+                                                            <select
+                                                                name="billing_address[state]"
+                                                                class="form-select form-select-lg mb-3 strState"
+                                                                aria-label=".form-select-lg example"
+                                                                aria-placeholder="State"
+                                                            >
+                                                                <option selected>State</option>
+                                                            </select>
+                                                        </div>
+                                                        <div class="col-md-4 mb-3">
+                                                            <input
+                                                                type="text"
+                                                                id="form6Example1"
+                                                                name="billing_address[zipCode]"
+                                                                class="form-control form-control-lg"
+                                                                placeholder="Zip Code"
+                                                            />
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+
                                             <div class="form-check mb-3">
-                                                <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault1" />
-                                                <label class="form-check-label" for="flexCheckDefault1"
+                                                <input
+                                                    class="form-check-input"
+                                                    type="checkbox"
+                                                    value="Yes"
+                                                    id="flexCheckDefault2"
+                                                />
+                                                <label class="form-check-label" for="flexCheckDefault2"
                                                     >By checking this box, I consent to automatic renewal of my plan membership
                                                     until I notify Hunity LLC to cancel the plan, and I have read and agreed to
                                                     the plan's <a href="#"><b>Terms and Conditions</b></a></label
                                                 >
                                             </div>
                                             <div class="form-check mb-3">
-                                                <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault1" />
-                                                <label class="form-check-label" for="flexCheckDefault1"
+                                                <input
+                                                    class="form-check-input"
+                                                    type="checkbox"
+                                                    value="Yes"
+                                                    id="flexCheckDefault3"
+                                                />
+                                                <label class="form-check-label" for="flexCheckDefault3"
                                                     >By checking this box, I understand that I may be contacted via email, text
                                                     message and/or telephone at the number I provided using automated technologies
                                                     and/or prerecorded messages, I understand that I can opt-out of receiving text
@@ -437,20 +633,14 @@
                         <div class="card mb-4 border shadow-0">
                             <div class="card-header">Summary</div>
                             <div class="card-body">
-                                <div class="d-flex justify-content-between">
+                                <div class="d-flex justify-content-start gap-3">
                                     <div class="text-primary-o">
-                                        <div class="div-card-icon">
-                                            <i class="fas fa-tooth p-2"></i>
-                                        </div>
-
-                                        <span class="text-small"><b>Dental & Vision</b></span>
+                                        <div class="div-card-icon" id="icon-service"></div>
+                                        <span class="text-small"><b id="text-service"></b></span>
                                     </div>
                                     <div class="text-primary-o">
-                                        <div class="div-card-icon">
-                                            <i class="fas fa-user p-2"></i>
-                                        </div>
-
-                                        <span class="text-small"><b>Individual</b></span>
+                                        <div class="div-card-icon" id="icon-plan"></div>
+                                        <span class="text-small"><b id="text-plan"></b></span>
                                     </div>
                                 </div>
                                 <div class="d-flex flex-column justify-content-start">
@@ -499,7 +689,12 @@
                                         <b class="text-normal"><i class="fas fa-percentage"></i> Have a coupon?</b>
                                     </div>
                                     <div class="input-group mt-3 mb-4">
-                                        <input type="text" class="form-control border" name="" placeholder="Enter cupon code" />
+                                        <input
+                                            type="text"
+                                            class="form-control border"
+                                            name="payment[couponCode]"
+                                            placeholder="Enter cupon code"
+                                        />
                                         <button class="btn btn-light text-primary border">Apply</button>
                                     </div>
                                 </div>
@@ -507,18 +702,35 @@
                                     <div class="btn-group">
                                         <input
                                             type="radio"
-                                            class="btn-check"
-                                            name="options"
+                                            class="btn-check triggerRules"
+                                            name="payment[billingPeriod]"
                                             id="option1"
                                             autocomplete="off"
-                                            checked
+                                            data-key="optionPrice1"
+                                            value="1"
                                         />
                                         <label class="btn btn-secondary" for="option1" data-mdb-ripple-init>Monthly</label>
 
-                                        <input type="radio" class="btn-check" name="options" id="option2" autocomplete="off" />
+                                        <input
+                                            type="radio"
+                                            class="btn-check triggerRules"
+                                            name="payment[billingPeriod]"
+                                            id="option2"
+                                            data-key="optionPrice2"
+                                            autocomplete="off"
+                                            value="6"
+                                        />
                                         <label class="btn btn-secondary" for="option2" data-mdb-ripple-init>Annual</label>
 
-                                        <input type="radio" class="btn-check" name="options" id="option3" autocomplete="off" />
+                                        <input
+                                            type="radio"
+                                            class="btn-check triggerRules"
+                                            name="payment[billingPeriod]"
+                                            id="option3"
+                                            data-key="optionPrice3"
+                                            autocomplete="off"
+                                            value="14"
+                                        />
                                         <label class="btn btn-secondary" for="option3" data-mdb-ripple-init>2 Years</label>
                                     </div>
                                 </div>
@@ -528,13 +740,18 @@
                                             One-Time Enrollment Fee
                                             <i class="fas fa-exclamation-circle"></i>
                                         </p>
-                                        <p class="mb-2 text-dark text-small fw-bold">$20.00</p>
+                                        <p class="mb-2 text-dark text-small fw-bold price-fee">
+                                            $
+                                            <input type="text" value="0" name="payment[fee]" class="input-payment" />
+                                        </p>
                                     </div>
                                     <div class="d-flex justify-content-between">
                                         <p class="mb-2 text-checked text-small fw-bold">
                                             Recurring Cost <i class="fas fa-exclamation-circle"></i>
                                         </p>
-                                        <p class="mb-2 text-dark text-small fw-bold">$9.95/month</p>
+                                        <p class="mb-2 text-dark text-small fw-bold price">
+                                            $<input type="text" value="0" name="payment[price]" class="input-payment" />/month
+                                        </p>
                                     </div>
                                     <hr />
                                 </div>
@@ -542,7 +759,11 @@
                             <div class="card-footer color-primary text-muted">
                                 <div class="d-flex justify-content-between">
                                     <p class="mb-2 text-white text-small">Plan Total Today:</p>
-                                    <p class="mb-2 fw-bold text-white">$149.90</p>
+                                    <p class="mb-2 fw-bold text-white total-price">
+                                        $<input type="text" value="0" name="payment[amountDueToday]" class="input-payment-0" />
+                                    </p>
+                                    <input type="hidden" name="payment[coupon]" />
+                                    <input type="hidden" name="payment[nextPayment]" />
                                 </div>
                             </div>
                         </div>
@@ -667,9 +888,12 @@
         <!-- Footer -->
         <!-- MDB -->
         <script type="text/javascript" src="js/mdb.min.js"></script>
-        <!-- Custom scripts -->
+        <!-- Google -->
         <script src="https://www.google.com/recaptcha/api.js"></script>
+        <!--bootstrap-datepicker  -->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js"></script>
+        <!-- Custom scripts -->
+        <script type="text/javascript" src="js/jquery.serializejson.js"></script>
         <script type="text/javascript" src="js/script.js"></script>
-        
     </body>
 </html>

@@ -89,7 +89,7 @@
                                 <div class="card-header">Choose Plan</div>
                                 <div class="card-body">
                                     <div class="row mb-2">
-                                        <div class="col-lg-4 mb-3">
+                                        <div class="col-lg-6 mb-3">
                                             <div class="h-100 border rounded-3 div-check-card">
                                                 <div class="p-3 div-check-card-inside">
                                                     <div class="d-flex justify-content-lg-end">
@@ -114,7 +114,7 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="col-lg-4 mb-3">
+                                        <div class="col-lg-6 mb-3">
                                             <div class="h-100 border rounded-3 div-check-card">
                                                 <div class="p-3 div-check-card-inside">
                                                     <div class="d-flex justify-content-lg-end">
@@ -126,7 +126,7 @@
                                                             data-id="7"
                                                             data-key="flexRadioService2"
                                                             data-icon="fas fa-heartbeat"
-                                                            data-label="Total Health"
+                                                            data-label="Smart Care"
                                                         />
                                                     </div>
                                                     <div class="d-flex flex-column justify-content-center align-items-center">
@@ -134,41 +134,11 @@
                                                         <label class="form-check-label" for="flexRadioService2">
                                                             <i class="fas fa-heartbeat fa-xlg"></i>
                                                         </label>
-                                                        <small class="text-checked mt-2">Total Health</small>
+                                                        <small class="text-checked mt-2">Smart Care</small>
                                                     </div>
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="col-lg-4 mb-3">
-                                            <div class="h-100 border rounded-3 div-check-card">
-                                                <div class="p-3 div-check-card-inside">
-                                                    <div class="d-flex justify-content-lg-end">
-                                                        <input
-                                                            class="float-end form-check-card triggerRules"
-                                                            type="radio"
-                                                            name="service[typeService]"
-                                                            id="flexRadioService3"
-                                                            data-id="8"
-                                                            data-key="flexRadioService3"
-                                                            data-icon="fas fa-dog"
-                                                            data-label="PetVet"
-                                                        />
-                                                    </div>
-                                                    <div class="d-flex flex-column justify-content-center align-items-center">
-                                                        <br />
-                                                        <label class="form-check-label" for="flexRadioService3">
-                                                            <i class="fas fa-dog fa-xlg"></i>
-                                                        </label>
-                                                        <small class="text-checked mt-2">PetVet</small>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="d-flex justify-content-lg-end">
-                                        <button type="button" class="btn btn-secondary btn-rounded" data-mdb-ripple-init>
-                                            Combine Plans
-                                        </button>
                                     </div>
                                 </div>
                             </div>
@@ -381,6 +351,19 @@
                                             <b class="text-normal">Dependent(s)</b>
                                         </div>
                                         <div class="card-body">
+                                            <input
+                                                type="hidden"
+                                                id="formTotalShow"
+                                                name="dependent[totalShow]"
+                                                value="0"
+                                                data-key="formTotalShow"
+                                            />
+                                            <!--
+                                                TODO:Ajustar
+                                                el
+                                                TOTAL
+                                                SHOW
+                                        -->
                                             <div class="row example-template">
                                                 <div class="col-md-10 divRowArea"></div>
                                                 <div class="col-md-2 mb-3 divRowArea">
@@ -397,6 +380,7 @@
                                                         name="dependent[dependentOne[name]]"
                                                         class="form-control form-control-lg"
                                                         placeholder="First name"
+                                                        data-key="formFirstName"
                                                     />
                                                 </div>
                                                 <div class="col-md-6 mb-3">
@@ -406,6 +390,7 @@
                                                         name="dependent[dependentOne[lastName]]"
                                                         class="form-control form-control-lg"
                                                         placeholder="Last name"
+                                                        data-key="formLastName"
                                                     />
                                                 </div>
 
@@ -416,6 +401,7 @@
                                                         class="form-select form-select-lg getRelationShips"
                                                         aria-label="form-select-lg example"
                                                         aria-placeholder="Relationship"
+                                                        data-key="formRelationship"
                                                     >
                                                         <option selected>Relationship</option>
                                                     </select>
@@ -427,6 +413,7 @@
                                                         class="form-select form-select-lg"
                                                         aria-label="form-select-lg example"
                                                         aria-placeholder="Gender"
+                                                        data-key="formGender"
                                                     >
                                                         <option selected>Gender</option>
                                                         <option value="1">Male</option>
@@ -440,6 +427,7 @@
                                                         name="dependent[dependentOne[birthdate]]"
                                                         class="form-control form-control-lg datepicker"
                                                         placeholder="Date of Birth"
+                                                        data-key="formDateOfBirth"
                                                     />
                                                 </div>
                                                 <hr />
@@ -540,28 +528,31 @@
                                                         <div class="col-md-6 mb-3">
                                                             <input
                                                                 type="text"
-                                                                id="form6Example1"
+                                                                id="formBillingAddress"
                                                                 name="billing_address[address]"
                                                                 class="form-control form-control-lg"
                                                                 placeholder="Address 1"
+                                                                data-key="formBillingAddress"
                                                             />
                                                         </div>
                                                         <div class="col-md-6 mb-3">
                                                             <input
                                                                 type="text"
-                                                                id="form6Example1"
+                                                                id="formAddress"
                                                                 name="billing_address[address2]"
                                                                 class="form-control form-control-lg"
                                                                 placeholder="Address 2"
+                                                                data-key="formAddress"
                                                             />
                                                         </div>
                                                         <div class="col-md-4 mb-3">
                                                             <input
                                                                 type="text"
-                                                                id="form6Example1"
+                                                                id="formCity"
                                                                 name="billing_address[city]"
                                                                 class="form-control form-control-lg"
                                                                 placeholder="Enter City"
+                                                                data-key="formCity"
                                                             />
                                                         </div>
                                                         <div class="col-md-4 mb-3">
@@ -570,6 +561,7 @@
                                                                 class="form-select form-select-lg mb-3 strState"
                                                                 aria-label=".form-select-lg example"
                                                                 aria-placeholder="State"
+                                                                data-key="formState"
                                                             >
                                                                 <option selected>State</option>
                                                             </select>
@@ -577,10 +569,11 @@
                                                         <div class="col-md-4 mb-3">
                                                             <input
                                                                 type="text"
-                                                                id="form6Example1"
+                                                                id="formZipCode"
                                                                 name="billing_address[zipCode]"
                                                                 class="form-control form-control-lg"
                                                                 placeholder="Zip Code"
+                                                                data-key="formZipCode"
                                                             />
                                                         </div>
                                                     </div>
@@ -645,43 +638,57 @@
                                 </div>
                                 <div class="d-flex flex-column justify-content-start">
                                     <div class="">
-                                        <input class="radio-small" type="radio" name="dental-savings" id="flexRadioDefault1" />
+                                        <input
+                                            class="radio-small deshabilitado radio-summary"
+                                            type="radio"
+                                            name="dental-savings"
+                                            id="flexRadioDefault1"
+                                        />
                                         <label class="form-check-label text-small" for="flexRadioDefault1">
                                             Dental Savings
                                         </label>
                                     </div>
                                     <div class="">
-                                        <input class="radio-small" type="radio" name="vision-savings" id="flexRadioDefault1" />
-                                        <label class="form-check-label text-small" for="flexRadioDefault1">
+                                        <input
+                                            class="radio-small deshabilitado radio-summary"
+                                            type="radio"
+                                            name="vision-savings"
+                                            id="flexRadioDefault2"
+                                        />
+                                        <label class="form-check-label text-small" for="flexRadioDefault2">
                                             Vision Savings
                                         </label>
                                     </div>
                                     <div class="">
-                                        <input class="radio-small" type="radio" name="urgent-care" id="flexRadioDefault1" />
-                                        <label class="form-check-label text-small" for="flexRadioDefault1">
+                                        <input
+                                            class="radio-small deshabilitado radio-summary"
+                                            type="radio"
+                                            name="urgent-care"
+                                            id="flexRadioDefault3"
+                                        />
+                                        <label class="form-check-label text-small" for="flexRadioDefault3">
                                             Urgent Care - Unlimited Telemedicine
                                         </label>
                                     </div>
                                     <div class="">
                                         <input
-                                            class="radio-small"
+                                            class="radio-small deshabilitado radio-summary"
                                             type="radio"
                                             name="prescription-savings"
-                                            id="flexRadioDefault1"
+                                            id="flexRadioDefault4"
                                         />
-                                        <label class="form-check-label text-small" for="flexRadioDefault1">
+                                        <label class="form-check-label text-small" for="flexRadioDefault4">
                                             Prescription Savings
                                         </label>
                                     </div>
                                     <div class="">
-                                        <input class="radio-small" type="radio" name="labs-savings" id="flexRadioDefault1" />
-                                        <label class="form-check-label text-small" for="flexRadioDefault1"> Labs Savings </label>
-                                    </div>
-                                    <div class="">
-                                        <input class="radio-small" type="radio" name="petvet1" id="flexRadioDefault1" />
-                                        <label class="form-check-label text-small" for="flexRadioDefault1">
-                                            PetVet - Unlimited TeleVet
-                                        </label>
+                                        <input
+                                            class="radio-small deshabilitado radio-summary"
+                                            type="radio"
+                                            name="labs-savings"
+                                            id="flexRadioDefault5"
+                                        />
+                                        <label class="form-check-label text-small" for="flexRadioDefault5"> Labs Savings </label>
                                     </div>
                                 </div>
                                 <div class="card border shadow-0 color-secondary my-3 p-3">

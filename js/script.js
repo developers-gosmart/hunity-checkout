@@ -4,6 +4,7 @@ var countries = [];
 var state = [];
 var plans = [];
 var relationShips = [];
+let totalShow = 0;
 
 function onSubmit(token) {
     // Selecciona el formulario
@@ -59,8 +60,10 @@ const configSelect = () => {
         if (typeof className === "string") {
             // Seleccionar los elementos con la clase
             const selects = document.querySelectorAll(`select.${className}`);
+
             // Obtener las opciones para la clase actual
             const opcionesParaClase = dataMap[className];
+
             // Hacer algo con los selects (ejemplo: agregar un evento)
             selects.forEach((select) => {
                 // Agregar las opciones al select
@@ -201,10 +204,14 @@ function getRules(id, value = "") {
         .then((response) => {
             const rules = response.data;
             rules.forEach((rule) => {
-                console.log("rule.affected >>> ", rule);
+                // console.log("rule.affected >>> ", rule);
                 const elementById = rule.affected != "" ? document.getElementById(rule.affected) : "";
                 const dataRule = rule.dataRule;
+                const divs = document.querySelectorAll(`.${rule.affected}`);
                 switch (rule.type) {
+                    case "addClass":
+                        elementById.classList.add("deshabilitado");
+                        break;
                     case "selectList":
                         elementById.innerHTML = "";
                         dataRule.forEach((data) => {
@@ -220,15 +227,12 @@ function getRules(id, value = "") {
                         elementById.value = dataRule === "parent.value" ? value : dataRule;
                         break;
                     case "display":
-                        const divs = document.querySelectorAll(`.${rule.affected}`);
                         divs.forEach((div) => {
                             div.style.display = value == "Yes" ? "block" : "none";
                         });
                         break;
                     case "hidden":
-                        const divs_h = document.querySelectorAll(`.${rule.affected}`);
-                        divs_h.forEach((div) => {
-                            console.log(div);
+                        divs.forEach((div) => {
                             div.style.display = value == "Yes" ? "none" : "block";
                         });
                         break;
@@ -237,10 +241,13 @@ function getRules(id, value = "") {
                         elementById.value = elementValue.value;
                         break;
                     case "clean":
-                        if (elementById.tagName === "INPUT" || elementById.tagName === "TEXTAREA") {
-                            elementById.value = "";
-                        } else if (elementById.tagName === "SELECT") {
-                            elementById.selectedIndex = 0; // Cambia el índice según la opción por defecto que desees
+                        if (elementById) {
+                            if (elementById.tagName === "INPUT" || elementById.tagName === "TEXTAREA") {
+                                elementById.value = "";
+                            } else if (elementById.tagName === "SELECT") {
+                                elementById.selectedIndex = 0; // Cambia el índice según la opción por defecto que desees
+                                elementById.classList.remove("deshabilitado");
+                            }
                         }
                         break;
                     case "disable":
@@ -289,6 +296,15 @@ function getRules(id, value = "") {
                         break;
                     case "applyFunction":
                         eval(`${dataRule}()`);
+                        break;
+                    case "remove_dynamic":
+                        divs.forEach((div) => {
+                            if (div.hasChildNodes()) {
+                                while (div.childNodes.length >= 1) {
+                                    div.removeChild(div.firstChild);
+                                }
+                            }
+                        });
                         break;
                     default:
                         break;
@@ -357,11 +373,28 @@ function putServiceSummary() {
     let icono = document.createElement("i");
 
     let radios = document.getElementsByName("service[typeService]");
+
     for (let radio of radios) {
         if (radio.checked) {
             icono.className = radio.getAttribute("data-icon") + " icon-plan";
             textService.innerHTML = radio.getAttribute("data-label");
             iconService.appendChild(icono);
+
+            let radios_summary = Array.from(document.getElementsByClassName("radio-summary"));
+            const dataId = radio.getAttribute("data-id");
+
+            radios_summary.forEach((radio, index) => {
+                if (dataId == 6) {
+                    radio.checked = index < 2;
+                    radio.style.opacity = index < 2 ? 1 : 0.5;
+                } else if (dataId == 7) {
+                    radio.checked = true;
+                    radio.style.opacity = 1;
+                } else {
+                    radio.checked = false;
+                    radio.style.opacity = 0.5;
+                }
+            });
         }
     }
 }
@@ -409,7 +442,6 @@ function calculatePayment() {
             for (const key in response.data) {
                 if (response.data.hasOwnProperty(key)) {
                     const value = response.data[key];
-                    console.log(key);
                     const element = document.querySelector(`input[name="${key}"]`);
                     if (element) {
                         element.value = value;
@@ -424,41 +456,52 @@ function obtenerValorRadioSeleccionadojQuery(nombre) {
 }
 
 function addDependents() {
-    var itemTemplate = document.querySelector(".example-template").cloneNode(true);
-    var editArea = document.querySelector(".edit-area");
-    var rowArea = document.querySelector(".row-area");
-    var itemNumber = 2;
+    let itemTemplate = document.querySelector(".example-template").cloneNode(true);
+    let editArea = document.querySelector(".edit-area");
+    let rowArea = document.querySelector(".row-area");
+    let itemNumber = 2;
+    totalShow = 1;
 
     document.addEventListener("click", function (event) {
         if (event.target.matches(".edit-area .add")) {
-            var item = itemTemplate.cloneNode(true);
-            var inputs = item.querySelectorAll("[name]");
+            let item = itemTemplate.cloneNode(true);
+            let inputs = item.querySelectorAll("[name]");
 
             inputs.forEach(function (input) {
-                var nameArray = input.name.split("[");
+                let nameArray = input.name.split("[");
                 nameArray[1] = nameArray[1].replace("One", intToEnglish(itemNumber));
                 input.name = nameArray[0] + "[" + nameArray[1] + "[" + nameArray[2];
             });
 
             itemNumber++;
-            console.log(item);
+            totalShow++;
+            assignDatepicker();
             rowArea.appendChild(item);
         }
 
         if (event.target.matches(".edit-area .rem")) {
-            var lastItem = editArea.querySelector(".example-template:last-child");
+            let lastItem = editArea.querySelector(".example-template:last-child");
+            totalShow--;
             if (lastItem) {
                 editArea.removeChild(lastItem);
             }
         }
 
         if (event.target.matches(".row-area .del")) {
-            var row = event.target.closest(".example-template");
+            let row = event.target.closest(".example-template");
             if (row) {
+                totalShow--;
                 row.remove();
             }
         }
+
+        document.querySelector(`input[name="dependent[totalShow]"]`).value = totalShow;
     });
+}
+
+function limpiarTotalShow() {
+    totalShow = 1;
+    document.querySelector(`input[name="dependent[totalShow]"]`).value = totalShow;
 }
 
 function intToEnglish(number) {

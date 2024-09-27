@@ -214,3 +214,10 @@
     font-weight: 600;
     color: #fff;;
 }
+
+.deshabilitado {
+    pointer-events: none; /* Deshabilita la interacción */
+    background-color: lightgray;
+    /* opacity: 0.5;  */
+    /* Cambia la opacidad para indicar que está deshabilitado */
+}

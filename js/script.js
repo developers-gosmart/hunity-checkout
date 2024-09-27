@@ -4,6 +4,7 @@ var countries = [];
 var state = [];
 var plans = [];
 var relationShips = [];
+let totalShow = 0;
 
 function onSubmit(token) {
     // Selecciona el formulario
@@ -455,41 +456,52 @@ function obtenerValorRadioSeleccionadojQuery(nombre) {
 }
 
 function addDependents() {
-    var itemTemplate = document.querySelector(".example-template").cloneNode(true);
-    var editArea = document.querySelector(".edit-area");
-    var rowArea = document.querySelector(".row-area");
-    var itemNumber = 2;
+    let itemTemplate = document.querySelector(".example-template").cloneNode(true);
+    let editArea = document.querySelector(".edit-area");
+    let rowArea = document.querySelector(".row-area");
+    let itemNumber = 2;
+    totalShow = 1;
 
     document.addEventListener("click", function (event) {
         if (event.target.matches(".edit-area .add")) {
-            var item = itemTemplate.cloneNode(true);
-            var inputs = item.querySelectorAll("[name]");
+            let item = itemTemplate.cloneNode(true);
+            let inputs = item.querySelectorAll("[name]");
 
             inputs.forEach(function (input) {
-                var nameArray = input.name.split("[");
+                let nameArray = input.name.split("[");
                 nameArray[1] = nameArray[1].replace("One", intToEnglish(itemNumber));
                 input.name = nameArray[0] + "[" + nameArray[1] + "[" + nameArray[2];
             });
 
             itemNumber++;
+            totalShow++;
             assignDatepicker();
             rowArea.appendChild(item);
         }
 
         if (event.target.matches(".edit-area .rem")) {
-            var lastItem = editArea.querySelector(".example-template:last-child");
+            let lastItem = editArea.querySelector(".example-template:last-child");
+            totalShow--;
             if (lastItem) {
                 editArea.removeChild(lastItem);
             }
         }
 
         if (event.target.matches(".row-area .del")) {
-            var row = event.target.closest(".example-template");
+            let row = event.target.closest(".example-template");
             if (row) {
+                totalShow--;
                 row.remove();
             }
         }
+
+        document.querySelector(`input[name="dependent[totalShow]"]`).value = totalShow;
     });
+}
+
+function limpiarTotalShow() {
+    totalShow = 1;
+    document.querySelector(`input[name="dependent[totalShow]"]`).value = totalShow;
 }
 
 function intToEnglish(number) {

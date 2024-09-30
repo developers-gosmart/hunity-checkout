@@ -6,27 +6,6 @@ var plans = [];
 var relationShips = [];
 let totalShow = 0;
 
-function onSubmit(token) {
-    // Selecciona el formulario
-    const form = document.getElementById("demo-form");
-
-    // Crea un objeto para almacenar los datos
-    const data = {};
-
-    // Itera sobre los elementos de entrada del formulario
-    Array.from(form.elements).forEach((input) => {
-        // Verifica que el elemento de entrada tenga un valor y no sea un botón
-        if (input.value.trim().length > 0 && input.type !== "submit") {
-            data[input.name] = input.value; // Asigna el valor al objeto usando el nombre del input como clave
-        }
-    });
-
-    // Muestra el objeto JSON en la consola
-    console.log(JSON.stringify(data));
-
-    // Envía el formulario
-    form.submit();
-}
 getAllAsync();
 
 // Función para agregar opciones a un select
@@ -226,6 +205,9 @@ function getRules(id, value = "") {
                     case "set":
                         elementById.value = dataRule === "parent.value" ? value : dataRule;
                         break;
+                    case "checked":                        
+                        elementById.checked = dataRule;
+                        break;
                     case "display":
                         divs.forEach((div) => {
                             div.style.display = value == "Yes" ? "block" : "none";
@@ -257,6 +239,12 @@ function getRules(id, value = "") {
                             }
                         } else {
                             elementById.disabled = true;
+                        }
+                        break;
+
+                    case "enable":
+                        if (elementById) {
+                            elementById.disabled = false;
                         }
                         break;
                     case "dob":
@@ -297,6 +285,13 @@ function getRules(id, value = "") {
                     case "applyFunction":
                         eval(`${dataRule}()`);
                         break;
+                        case "applyFunctionAwait":
+                            async function waitSeconds() {
+                                await delay(800); // 
+                                eval(`${dataRule}()`);
+                            }                                
+                            waitSeconds()
+                            break;
                     case "remove_dynamic":
                         divs.forEach((div) => {
                             if (div.hasChildNodes()) {
@@ -323,13 +318,13 @@ function getIdService() {
     );
 }
 
-function getIdPlan() {
-    const radioButtons = document.querySelectorAll('input[type="radio"][name="plan[typePlan]"]');
-    return (
+function getIdPlan() {      
+    const radioButtons = document.querySelectorAll('input[type="radio"][name="plan[typePlan]"]'); 
+    return  (
         Array.from(radioButtons)
             .find((radioButton) => radioButton.checked)
             ?.getAttribute("data-id") || 0
-    );
+    );;
 }
 
 async function getListPlans() {
@@ -346,6 +341,7 @@ async function getListPlans() {
 }
 
 function setAttributeRadioLevel(plans) {
+ 
     // Establece en el HTML el atributo data-id con los id_plan
     if (plans[0].name === "Individual") {
         const individual = document.getElementById("radioChoseLevel1");
@@ -362,6 +358,7 @@ function setAttributeRadioLevel(plans) {
         family.setAttribute("data-id", plans[2].id);
         addDependents();
     }
+
 }
 
 function putServiceSummary() {
@@ -378,8 +375,8 @@ function putServiceSummary() {
         if (radio.checked) {
             icono.className = radio.getAttribute("data-icon") + " icon-plan";
             textService.innerHTML = radio.getAttribute("data-label");
-            iconService.appendChild(icono);
-
+            iconService.appendChild(icono); 
+       
             let radios_summary = Array.from(document.getElementsByClassName("radio-summary"));
             const dataId = radio.getAttribute("data-id");
 
@@ -395,6 +392,8 @@ function putServiceSummary() {
                     radio.style.opacity = 0.5;
                 }
             });
+
+           
         }
     }
 }
@@ -411,46 +410,45 @@ function putPlanSummary() {
         if (radio.checked) {
             icono.className = radio.getAttribute("data-icon") + " icon-plan";
             textPlan.innerHTML = radio.getAttribute("data-label");
-            iconPlan.appendChild(icono);
-            document.getElementById("option1").checked = true;
-            calculatePayment();
+            iconPlan.appendChild(icono); 
         }
     }
-}
+} 
 
 function calculatePayment() {
     console.log("calculatePayment");
+ 
+    getListPlans()
+   let idPlan =  getIdPlan();
+   console.log(idPlan);
+        const idBillingPeriod = obtenerValorRadioSeleccionadojQuery("payment[billingPeriod]");
+        const coupon = document.querySelector('input[name="payment[couponCode]"]').value;
 
-    let idPlan = getIdPlan();
+        console.log("idPlan ", idPlan); 
+        console.log("idBilling ", idBillingPeriod);
+        console.log("coupon ", coupon);
 
-    const idBillingPeriod = obtenerValorRadioSeleccionadojQuery("payment[billingPeriod]");
-    const coupon = document.querySelector('input[name="payment[couponCode]"]').value;
-
-    console.log("idPlan ", idPlan);
-    console.log("idBilling ", idBillingPeriod);
-    console.log("coupon ", coupon);
-
-    fetch(`${server}/ws/wizard/getcalculate?id_plan=${idPlan}&id_billing_period=${idBillingPeriod}&coupon=${coupon}`)
-        .then((response) => {
-            if (!response.ok) {
-                throw new Error("Network response was not ok");
-            }
-            return response.json();
-        })
-        .then((response) => {
-            const data = response.data;
-            for (const key in response.data) {
-                if (response.data.hasOwnProperty(key)) {
-                    const value = response.data[key];
-                    const element = document.querySelector(`input[name="${key}"]`);
-                    if (element) {
-                        element.value = value;
+         fetch(`${server}/ws/wizard/getcalculate?id_plan=${idPlan}&id_billing_period=${idBillingPeriod}&coupon=${coupon}`)
+            .then((response) => {
+                if (!response.ok) {
+                    throw new Error("Network response was not ok");
+                }
+                return response.json();
+            })
+            .then((response) => {
+                const data = response.data;
+                for (const key in response.data) {
+                    if (response.data.hasOwnProperty(key)) {
+                        const value = response.data[key];
+                        const element = document.querySelector(`input[name="${key}"]`);
+                        if (element) {
+                            element.value = value;
+                        }
                     }
                 }
-            }
-        });
-}
+            });
 
+}
 function obtenerValorRadioSeleccionadojQuery(nombre) {
     return $('input[name="' + nombre + '"]:checked').val();
 }
@@ -502,6 +500,27 @@ function addDependents() {
 function limpiarTotalShow() {
     totalShow = 1;
     document.querySelector(`input[name="dependent[totalShow]"]`).value = totalShow;
+}
+
+
+function onSubmit() {
+    // Selecciona el formulario
+    const form = document.getElementById("demo-form");
+    console.log(form);
+    // Crea un objeto para almacenar los datos
+     const data = $("#demo-form")
+                .find(":input")
+                .filter(function () {
+                  return $.trim(this.value).length >= 0;
+                })
+                .serializeJSON(); 
+    
+
+    // Muestra el objeto JSON en la consola
+    console.log(JSON.stringify(data));
+
+    // Envía el formulario
+    // form.submit();
 }
 
 function intToEnglish(number) {
@@ -558,3 +577,8 @@ function intToEnglish(number) {
     }
     return result;
 }
+
+function delay(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+}
+ 

@@ -100,9 +100,9 @@
     <!-- class="d-flex align-items-center justify-content-center flex-column flex-md-row" -->
     <section class="bg-light py-5">
       <div class="container">
-        <div class="row">
-          <div class="col-xl-8 col-lg-8 mb-4">
-            <form id="demo-form">
+        <form id="demo-form">
+          <div class="row">
+            <div class="col-xl-8 col-lg-8 mb-4">
               <div class="card mb-2 border shadow-0">
                 <div class="card-header">Choose Plan</div>
                 <div class="card-body">
@@ -703,214 +703,219 @@
                   </button>
                 </div>
               </div>
-            </form>
-          </div>
+            </div>
 
-          <div class="col-xl-4 col-lg-4">
-            <div class="card mb-4 border shadow-0">
-              <div class="card-header">Summary</div>
-              <div class="card-body">
-                <div class="d-flex justify-content-start gap-3">
-                  <div class="text-primary-o">
-                    <div class="div-card-icon" id="icon-service"></div>
-                    <span class="text-small"><b id="text-service"></b></span>
+            <div class="col-xl-4 col-lg-4">
+              <div class="card mb-4 border shadow-0">
+                <div class="card-header">Summary</div>
+                <div class="card-body">
+                  <div class="d-flex justify-content-start gap-3">
+                    <div class="text-primary-o">
+                      <div class="div-card-icon" id="icon-service"></div>
+                      <span class="text-small"><b id="text-service"></b></span>
+                    </div>
+                    <div class="text-primary-o">
+                      <div class="div-card-icon" id="icon-plan"></div>
+                      <span class="text-small"><b id="text-plan"></b></span>
+                    </div>
                   </div>
-                  <div class="text-primary-o">
-                    <div class="div-card-icon" id="icon-plan"></div>
-                    <span class="text-small"><b id="text-plan"></b></span>
+                  <div class="d-flex flex-column justify-content-start">
+                    <div class="">
+                      <input
+                        class="radio-small deshabilitado radio-summary"
+                        type="radio"
+                        name="summary[dentalSavings]"
+                        id="flexRadioDefault1"
+                        value="Yes"
+                      />
+                      <label
+                        class="form-check-label text-small"
+                        for="flexRadioDefault1"
+                      >
+                        Dental Savings
+                      </label>
+                    </div>
+                    <div class="">
+                      <input
+                        class="radio-small deshabilitado radio-summary"
+                        type="radio"
+                        name="summary[visionSavings]"
+                        id="flexRadioDefault2"
+                        value="Yes"
+                      />
+                      <label
+                        class="form-check-label text-small"
+                        for="flexRadioDefault2"
+                      >
+                        Vision Savings
+                      </label>
+                    </div>
+                    <div class="">
+                      <input
+                        class="radio-small deshabilitado radio-summary"
+                        type="radio"
+                        name="summary[urgentCare]"
+                        id="flexRadioDefault3"
+                        value="Yes"
+                      />
+                      <label
+                        class="form-check-label text-small"
+                        for="flexRadioDefault3"
+                      >
+                        Urgent Care - Unlimited Telemedicine
+                      </label>
+                    </div>
+                    <div class="">
+                      <input
+                        class="radio-small deshabilitado radio-summary"
+                        type="radio"
+                        name="summary[prescriptionSavings]"
+                        id="flexRadioDefault4"
+                        value="Yes"
+                      />
+                      <label
+                        class="form-check-label text-small"
+                        for="flexRadioDefault4"
+                      >
+                        Prescription Savings
+                      </label>
+                    </div>
+                    <div class="">
+                      <input
+                        class="radio-small deshabilitado radio-summary"
+                        type="radio"
+                        name="summary[labsSavings]"
+                        id="flexRadioDefault5"
+                        value="Yes"
+                      />
+                      <label
+                        class="form-check-label text-small"
+                        for="flexRadioDefault5"
+                      >
+                        Labs Savings
+                      </label>
+                    </div>
                   </div>
-                </div>
-                <div class="d-flex flex-column justify-content-start">
-                  <div class="">
-                    <input
-                      class="radio-small deshabilitado radio-summary"
-                      type="radio"
-                      name="dental-savings"
-                      id="flexRadioDefault1"
-                    />
-                    <label
-                      class="form-check-label text-small"
-                      for="flexRadioDefault1"
-                    >
-                      Dental Savings
-                    </label>
-                  </div>
-                  <div class="">
-                    <input
-                      class="radio-small deshabilitado radio-summary"
-                      type="radio"
-                      name="vision-savings"
-                      id="flexRadioDefault2"
-                    />
-                    <label
-                      class="form-check-label text-small"
-                      for="flexRadioDefault2"
-                    >
-                      Vision Savings
-                    </label>
-                  </div>
-                  <div class="">
-                    <input
-                      class="radio-small deshabilitado radio-summary"
-                      type="radio"
-                      name="urgent-care"
-                      id="flexRadioDefault3"
-                    />
-                    <label
-                      class="form-check-label text-small"
-                      for="flexRadioDefault3"
-                    >
-                      Urgent Care - Unlimited Telemedicine
-                    </label>
-                  </div>
-                  <div class="">
-                    <input
-                      class="radio-small deshabilitado radio-summary"
-                      type="radio"
-                      name="prescription-savings"
-                      id="flexRadioDefault4"
-                    />
-                    <label
-                      class="form-check-label text-small"
-                      for="flexRadioDefault4"
-                    >
-                      Prescription Savings
-                    </label>
-                  </div>
-                  <div class="">
-                    <input
-                      class="radio-small deshabilitado radio-summary"
-                      type="radio"
-                      name="labs-savings"
-                      id="flexRadioDefault5"
-                    />
-                    <label
-                      class="form-check-label text-small"
-                      for="flexRadioDefault5"
-                    >
-                      Labs Savings
-                    </label>
-                  </div>
-                </div>
-                <div class="card border shadow-0 color-secondary my-3 p-3">
-                  <div class="card-title text-primary-o">
-                    <b class="text-normal"
-                      ><i class="fas fa-percentage"></i> Have a coupon?</b
-                    >
-                  </div>
-                  <div class="input-group mt-3 mb-4">
-                    <input
-                      type="text"
-                      class="form-control border"
-                      name="payment[couponCode]"
-                      placeholder="Enter cupon code"
-                    />
-                    <button class="btn btn-light text-primary border">
-                      Apply
-                    </button>
-                  </div>
-                </div>
-                <div class="d-flex justify-content-center mb-4">
-                  <div class="btn-group">
-                    <input
-                      type="radio"
-                      class="btn-check triggerRules"
-                      name="payment[billingPeriod]"
-                      id="option1"
-                      autocomplete="off"
-                      data-key="optionPrice1"
-                      value="1"
-                    />
-                    <label
-                      class="btn btn-secondary"
-                      for="option1"
-                      data-mdb-ripple-init
-                      >Monthly</label
-                    >
-
-                    <input
-                      type="radio"
-                      class="btn-check triggerRules"
-                      name="payment[billingPeriod]"
-                      id="option2"
-                      data-key="optionPrice2"
-                      autocomplete="off"
-                      value="6"
-                    />
-                    <label
-                      class="btn btn-secondary"
-                      for="option2"
-                      data-mdb-ripple-init
-                      >Annual</label
-                    >
-
-                    <input
-                      type="radio"
-                      class="btn-check triggerRules"
-                      name="payment[billingPeriod]"
-                      id="option3"
-                      data-key="optionPrice3"
-                      autocomplete="off"
-                      value="14"
-                    />
-                    <label
-                      class="btn btn-secondary"
-                      for="option3"
-                      data-mdb-ripple-init
-                      >2 Years</label
-                    >
-                  </div>
-                </div>
-                <div class="ms-lg-3 mt-4 mt-lg-0" style="max-width: 320px">
-                  <div class="d-flex justify-content-between">
-                    <p class="mb-2 text-checked text-small fw-bold">
-                      One-Time Enrollment Fee
-                      <i class="fas fa-exclamation-circle"></i>
-                    </p>
-                    <p class="mb-2 text-dark text-small fw-bold price-fee">
-                      $
+                  <div class="card border shadow-0 color-secondary my-3 p-3">
+                    <div class="card-title text-primary-o">
+                      <b class="text-normal"
+                        ><i class="fas fa-percentage"></i> Have a coupon?</b
+                      >
+                    </div>
+                    <div class="input-group mt-3 mb-4">
                       <input
                         type="text"
-                        value="0"
-                        name="payment[fee]"
-                        class="input-payment"
+                        class="form-control border"
+                        name="payment[couponCode]"
+                        placeholder="Enter cupon code"
                       />
-                    </p>
+                      <button class="btn btn-light text-primary border">
+                        Apply
+                      </button>
+                    </div>
                   </div>
+                  <div class="d-flex justify-content-center mb-4">
+                    <div class="btn-group">
+                      <input
+                        type="radio"
+                        class="btn-check triggerRules"
+                        name="payment[billingPeriod]"
+                        id="option1"
+                        autocomplete="off"
+                        data-key="optionPrice1"
+                        value="1"
+                      />
+                      <label
+                        class="btn btn-secondary"
+                        for="option1"
+                        data-mdb-ripple-init
+                        >Monthly</label
+                      >
+
+                      <input
+                        type="radio"
+                        class="btn-check triggerRules"
+                        name="payment[billingPeriod]"
+                        id="option2"
+                        data-key="optionPrice2"
+                        autocomplete="off"
+                        value="6"
+                      />
+                      <label
+                        class="btn btn-secondary"
+                        for="option2"
+                        data-mdb-ripple-init
+                        >Annual</label
+                      >
+
+                      <input
+                        type="radio"
+                        class="btn-check triggerRules"
+                        name="payment[billingPeriod]"
+                        id="option3"
+                        data-key="optionPrice3"
+                        autocomplete="off"
+                        value="14"
+                      />
+                      <label
+                        class="btn btn-secondary"
+                        for="option3"
+                        data-mdb-ripple-init
+                        >2 Years</label
+                      >
+                    </div>
+                  </div>
+                  <div class="ms-lg-3 mt-4 mt-lg-0" style="max-width: 320px">
+                    <div class="d-flex justify-content-between">
+                      <p class="mb-2 text-checked text-small fw-bold">
+                        One-Time Enrollment Fee
+                        <i class="fas fa-exclamation-circle"></i>
+                      </p>
+                      <p class="mb-2 text-dark text-small fw-bold price-fee">
+                        $
+                        <input
+                          type="text"
+                          value="0"
+                          name="payment[fee]"
+                          class="input-payment"
+                        />
+                      </p>
+                    </div>
+                    <div class="d-flex justify-content-between">
+                      <p class="mb-2 text-checked text-small fw-bold">
+                        Recurring Cost <i class="fas fa-exclamation-circle"></i>
+                      </p>
+                      <p class="mb-2 text-dark text-small fw-bold price">
+                        $<input
+                          type="text"
+                          value="0"
+                          name="payment[price]"
+                          class="input-payment"
+                        />/month
+                      </p>
+                    </div>
+                    <hr />
+                  </div>
+                </div>
+                <div class="card-footer color-primary text-muted">
                   <div class="d-flex justify-content-between">
-                    <p class="mb-2 text-checked text-small fw-bold">
-                      Recurring Cost <i class="fas fa-exclamation-circle"></i>
-                    </p>
-                    <p class="mb-2 text-dark text-small fw-bold price">
+                    <p class="mb-2 text-white text-small">Plan Total Today:</p>
+                    <p class="mb-2 fw-bold text-white total-price">
                       $<input
                         type="text"
                         value="0"
-                        name="payment[price]"
-                        class="input-payment"
-                      />/month
+                        name="payment[amountDueToday]"
+                        class="input-payment-0"
+                      />
                     </p>
+                    <input type="hidden" name="payment[coupon]" />
+                    <input type="hidden" name="payment[nextPayment]" />
                   </div>
-                  <hr />
-                </div>
-              </div>
-              <div class="card-footer color-primary text-muted">
-                <div class="d-flex justify-content-between">
-                  <p class="mb-2 text-white text-small">Plan Total Today:</p>
-                  <p class="mb-2 fw-bold text-white total-price">
-                    $<input
-                      type="text"
-                      value="0"
-                      name="payment[amountDueToday]"
-                      class="input-payment-0"
-                    />
-                  </p>
-                  <input type="hidden" name="payment[coupon]" />
-                  <input type="hidden" name="payment[nextPayment]" />
                 </div>
               </div>
             </div>
           </div>
-        </div>
+        </form>
       </div>
     </section>
 

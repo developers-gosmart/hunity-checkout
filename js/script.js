@@ -1,10 +1,11 @@
 const server = "https://wshunitydev.gosmartcrm.com:4000";
 
-var countries = [];
-var state = [];
-var plans = [];
-var relationShips = [];
+let countries = [];
+let state = [];
+let plans = [];
+let relationShips = [];
 let totalShow = 0;
+let selectedPlanId = 0;
 
 getAllAsync();
 
@@ -94,7 +95,7 @@ function eventTrigger() {
     const triggerElementsRadio = document.querySelectorAll("input[type='radio'].triggerRules");
     triggerElementsRadio.forEach((element) => {
         element.addEventListener("click", function () {
-            getRules(this.getAttribute("data-key"), this.value);
+            getRules(this.getAttribute("data-key"), this.getAttribute("data-value"));
         });
     });
 
@@ -169,10 +170,7 @@ async function getRelationShips() {
 }
 
 function getRules(id, value = "") {
-    let idPlan = getIdPlan();
-
-    // console.log("ID: " + id);
-    // console.log("value: " + value);
+    let idPlan = getIdPlan(); 
 
     let planString = idPlan !== 0 ? `&id_plan=${idPlan}` : "";
 
@@ -183,7 +181,7 @@ function getRules(id, value = "") {
         .then((response) => {
             const rules = response.data;
             rules.forEach((rule) => {
-                // console.log("rule.affected >>> ", rule);
+                // console.log("rule.affected >>> ", rule); 
                 const elementById = rule.affected != "" ? document.getElementById(rule.affected) : "";
                 const dataRule = rule.dataRule;
                 const divs = document.querySelectorAll(`.${rule.affected}`);
@@ -198,8 +196,7 @@ function getRules(id, value = "") {
                             elementById.add(option);
                         });
                         break;
-                    case "selectListBeneficiaries":
-                        // TODO aca devuelve el units_max de plan_price lo que significa el maximo de beneficiario de plan
+                    case "selectListBeneficiaries": 
                         elementById.innerHTML = "";
                         break;
                     case "set":
@@ -209,7 +206,7 @@ function getRules(id, value = "") {
                         elementById.checked = dataRule;
                         break;
                     case "display":
-                        divs.forEach((div) => {
+                        divs.forEach((div) => { 
                             div.style.display = value == "Yes" ? "block" : "none";
                         });
                         break;
@@ -284,14 +281,7 @@ function getRules(id, value = "") {
                         break;
                     case "applyFunction":
                         eval(`${dataRule}()`);
-                        break;
-                        case "applyFunctionAwait":
-                            async function waitSeconds() {
-                                await delay(800); // 
-                                eval(`${dataRule}()`);
-                            }                                
-                            waitSeconds()
-                            break;
+                        break; 
                     case "remove_dynamic":
                         divs.forEach((div) => {
                             if (div.hasChildNodes()) {
@@ -324,7 +314,7 @@ function getIdPlan() {
         Array.from(radioButtons)
             .find((radioButton) => radioButton.checked)
             ?.getAttribute("data-id") || 0
-    );;
+    );
 }
 
 async function getListPlans() {
@@ -337,7 +327,7 @@ async function getListPlans() {
     // console.log("planes",plans);
     // Establece en el HTML el atributo data-id con los id_plan
     // en cada radiolevel (a nivel de bd los planes)
-    setAttributeRadioLevel(plans);
+    setAttributeRadioLevel(plans); 
 }
 
 function setAttributeRadioLevel(plans) {
@@ -346,21 +336,23 @@ function setAttributeRadioLevel(plans) {
     if (plans[0].name === "Individual") {
         const individual = document.getElementById("radioChoseLevel1");
         individual.setAttribute("data-id", plans[0].id);
+        individual.value =  plans[0].id;
     }
 
     if (plans[1].name === "Couple") {
         const couple = document.getElementById("radioChoseLevel2");
         couple.setAttribute("data-id", plans[1].id);
+        couple.value =  plans[1].id;
     }
 
     if (plans[2].name === "Family") {
         const family = document.getElementById("radioChoseLevel3");
         family.setAttribute("data-id", plans[2].id);
+        family.value =  plans[2].id;
         addDependents();
-    }
-
+    } 
 }
-
+ 
 function putServiceSummary() {
     let iconService = document.getElementById("icon-service"),
         textService = document.getElementById("text-service");
@@ -415,38 +407,40 @@ function putPlanSummary() {
     }
 } 
 
-function calculatePayment() {
+async function calculatePayment() {
     console.log("calculatePayment");
- 
-    getListPlans()
-   let idPlan =  getIdPlan();
-   console.log(idPlan);
-        const idBillingPeriod = obtenerValorRadioSeleccionadojQuery("payment[billingPeriod]");
-        const coupon = document.querySelector('input[name="payment[couponCode]"]').value;
 
-        console.log("idPlan ", idPlan); 
-        console.log("idBilling ", idBillingPeriod);
-        console.log("coupon ", coupon);
+    let idService = getIdService(); 
+    plans = await getPlans(idService); 
+    setAttributeRadioLevel(plans);
+    
+    const selectedPlanId = getIdPlan();
+    const idBillingPeriod = obtenerValorRadioSeleccionadojQuery("payment[billingPeriod]");
+    const coupon = document.querySelector('input[name="payment[couponCode]"]').value;
 
-         fetch(`${server}/ws/wizard/getcalculate?id_plan=${idPlan}&id_billing_period=${idBillingPeriod}&coupon=${coupon}`)
-            .then((response) => {
-                if (!response.ok) {
-                    throw new Error("Network response was not ok");
-                }
-                return response.json();
-            })
-            .then((response) => {
-                const data = response.data;
-                for (const key in response.data) {
-                    if (response.data.hasOwnProperty(key)) {
-                        const value = response.data[key];
-                        const element = document.querySelector(`input[name="${key}"]`);
-                        if (element) {
-                            element.value = value;
-                        }
+    console.log("selectedPlanId ", plans); 
+    console.log("idBilling ", idBillingPeriod);
+    console.log("coupon ", coupon);
+
+        fetch(`${server}/ws/wizard/getcalculate?id_plan=${selectedPlanId}&id_billing_period=${idBillingPeriod}&coupon=${coupon}`)
+        .then((response) => {
+            if (!response.ok) {
+                throw new Error("Network response was not ok");
+            }
+            return response.json();
+        })
+        .then((response) => {
+            const data = response.data;
+            for (const key in response.data) {
+                if (response.data.hasOwnProperty(key)) {
+                    const value = response.data[key];
+                    const element = document.querySelector(`input[name="${key}"]`);
+                    if (element) {
+                        element.value = value;
                     }
                 }
-            });
+            }
+        });
 
 }
 function obtenerValorRadioSeleccionadojQuery(nombre) {
@@ -517,10 +511,7 @@ function onSubmit() {
     
 
     // Muestra el objeto JSON en la consola
-    console.log(JSON.stringify(data));
-
-    // Envía el formulario
-    // form.submit();
+    console.log(JSON.stringify(data)); 
 }
 
 function intToEnglish(number) {
@@ -576,9 +567,5 @@ function intToEnglish(number) {
         }
     }
     return result;
-}
-
-function delay(ms) {
-    return new Promise(resolve => setTimeout(resolve, ms));
 }
  

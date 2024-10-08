@@ -6,26 +6,36 @@ var plans = [];
 var relationShips = [];
 let totalShow = 0;
 
+var stripe, isCompletePaymentElement;
+
 function onSubmit(token) {
-    // Selecciona el formulario
-    const form = document.getElementById("demo-form");
+    if(!isCompletePaymentElement){
+        console.log("IN COMPLETO")
+        return;
+    }else{
 
-    // Crea un objeto para almacenar los datos
-    const data = {};
+    }
 
-    // Itera sobre los elementos de entrada del formulario
-    Array.from(form.elements).forEach((input) => {
-        // Verifica que el elemento de entrada tenga un valor y no sea un botón
-        if (input.value.trim().length > 0 && input.type !== "submit") {
-            data[input.name] = input.value; // Asigna el valor al objeto usando el nombre del input como clave
-        }
-    });
+    // console.log("COMPLETADO")
+    // // Selecciona el formulario
+    // const form = document.getElementById("demo-form");
 
-    // Muestra el objeto JSON en la consola
-    console.log(JSON.stringify(data));
+    // // Crea un objeto para almacenar los datos
+    // const data = {};
 
-    // Envía el formulario
-    form.submit();
+    // // Itera sobre los elementos de entrada del formulario
+    // Array.from(form.elements).forEach((input) => {
+    //     // Verifica que el elemento de entrada tenga un valor y no sea un botón
+    //     if (input.value.trim().length > 0 && input.type !== "submit") {
+    //         data[input.name] = input.value; // Asigna el valor al objeto usando el nombre del input como clave
+    //     }
+    // });
+
+    // // Muestra el objeto JSON en la consola
+    // console.log(JSON.stringify(data));
+
+    // // Envía el formulario
+    // form.submit();
 }
 getAllAsync();
 
@@ -192,8 +202,8 @@ async function getRelationShips() {
 function getRules(id, value = "") {
     let idPlan = getIdPlan();
 
-    // console.log("ID: " + id);
-    // console.log("value: " + value);
+    console.log("ID: " + id);
+    console.log("value: " + value);
 
     let planString = idPlan !== 0 ? `&id_plan=${idPlan}` : "";
 
@@ -204,7 +214,7 @@ function getRules(id, value = "") {
         .then((response) => {
             const rules = response.data;
             rules.forEach((rule) => {
-                // console.log("rule.affected >>> ", rule);
+                console.log("rule.affected >>> ", rule);
                 const elementById = rule.affected != "" ? document.getElementById(rule.affected) : "";
                 const dataRule = rule.dataRule;
                 const divs = document.querySelectorAll(`.${rule.affected}`);
@@ -557,4 +567,78 @@ function intToEnglish(number) {
         }
     }
     return result;
+}
+
+function initStripe(type, affected) {
+    var elements,
+    paymentElement,
+    clientSecret,
+    lang = "es";
+
+    let idService = getIdService();
+
+    fetch(`${server}/ws/wizard/getsetupintentstripe?id_service=${idService}&type=${type}`)
+    .then((response) => {
+      if (!response.ok) {
+        throw new Error("Network response was not ok");
+      }
+      return response.json();
+    })
+    .then((response) => {
+      var data = response;
+      stripe = Stripe(data.publishableKey, { locale: lang }); // clave publica stripe
+      const appearance = {
+        theme: "stripe",
+        variables: {
+          colorText: "#32325d",
+          fontFamily: '"Helvetica Neue", Helvetica, sans-serif',
+        },
+      };
+      clientSecret = data.setupIntent.client_secret;
+      const options = {
+        clientSecret: data.setupIntent.client_secret,
+        appearance: appearance,
+      };
+      elements = stripe.elements(options);
+      paymentElement = elements.create("payment");
+      paymentElement.mount(`#${affected}`);
+
+      paymentElement.addEventListener("change", (event) => {
+        if (event.complete) {
+          isCompletePaymentElement = true;
+        } else {
+          isCompletePaymentElement = false;
+        }
+      });
+    });
+}
+
+function confirmSetupIntent(callback) {
+  //Esta función se usa para confirmar el setupIntent de stripe cuando este es seleccionado como metodo de pago
+  //Esta devuelve el payment_method (metodo de pago ) el cual se le adjuntará al customer(aplicante)
+  //Y tambien el status (succeded ó required_action)
+    stripe
+    .confirmSetup({
+        elements,
+        redirect: "if_required",
+        confirmParams: {
+            // Return URL where the customer should be redirected after the SetupIntent is confirmed.
+        return_url: "https://angular.gosmartcrm.com",
+        },
+    })
+    .then(function (result) {
+        if (result.error) {
+            // errores por tarjeta bloqueada, numero incorrecto, rechazo del banco
+            //ó error de procesamiento de stripe
+            var message = result.error.message;
+            alert(message);
+        } else {
+            console.log("confirmSetupIntent Success");
+            var setupIntent = {
+              payment_method: result.setupIntent.payment_method,
+              status: result.setupIntent.status,
+            };
+            return setupIntent;
+        }
+    });
 }

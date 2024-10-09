@@ -6,14 +6,80 @@ var plans = [];
 var relationShips = [];
 let totalShow = 0;
 
-var stripe, isCompletePaymentElement;
+var stripe, elements, isCompletePaymentElement;
+var lang = "es";
 
 function onSubmit(token) {
     if(!isCompletePaymentElement){
         console.log("IN COMPLETO")
         return;
     }else{
+        showLoading("Por favor espere..!");
+        let paymentType = $("#formPaymentType").val();
+        let applicant = {
+            name: document.querySelector('input[name="holder[name]"]').value,
+            lastName: document.querySelector('input[name="holder[lastName]"]').value,
+            email: document.querySelector('input[name="holder[email]"]').value,
+        }
 
+        if (paymentType == 1) { // TARJETA DE CREDITO
+            //llamar todo lo relacionado a stripe e intentar pagar
+            //1- Confirm Setup
+            //2- crear customer
+            //3- Adjuntar metodo de pago al customer
+            //4- Ejecutar el pago
+            //5- Llamar a la funcion para guardar todos los campos del wizard
+
+            confirmSetupIntent(function(response){
+                console.log("response")
+                console.log(response)
+                if (response.error) {
+                    Swal.fire({
+                        title: response.error.message,
+                        text: 
+                            lang == "es" 
+                            ? "Tu tarjeta ha fallado, prueba con otra." 
+                            : "Your card has failed, try another one.",
+                        icon: "error"
+                    });
+                }else{
+                    //LLamar al servicio X, enviarle todo lo necesario para 
+                    //1 Crear el customer
+                    //2 Adjuntarle el metodo de pago
+                    //3 Intentar pagar
+                    //Si paga, se guarda toda la informacion de la aplicacion, si no, no!
+
+                    let dataToSend = {
+                        applicant: applicant,
+                        setupIntent: response,
+                        amount: document.querySelector('input[name="payment[amountDueToday]"]').value,
+                    };
+                    fetch(`${server}/ws/wizard/test`, {
+                        method: 'POST', // O 'PUT', dependiendo de tu API
+                        headers: {
+                            'Content-Type': 'application/json', // Especifica que envías JSON
+                        },
+                        body: JSON.stringify(dataToSend) // Convierte el objeto a JSON
+                    })
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Error en la red');
+                        }
+                        return response.json(); // Convierte la respuesta a JSON
+                    })
+                    .then(data => {
+                        console.log('Éxito:', data); // Maneja la respuesta exitosa
+                    })
+                    .catch((error) => {
+                        console.error('Error:', error); // Maneja el error
+                    });
+                }
+            })
+        }else if (paymentType == 2){ // CUENTA BANCARIA
+
+        }else if (paymentType == 3){ // OTHER
+
+        } // ETC ETC ETC
     }
 
     // console.log("COMPLETADO")
@@ -276,8 +342,7 @@ function getRules(id, value = "") {
                         if (dataRule == "clean") {
                             elementById.innerHTML = "";
                         } else if (value == 3) {
-                            // 3: Zelle
-                            var lang = "es"; //test
+                            // 3: Zelle                            
                             var amount = document.querySelector('input[name="payment[amountDueToday]"]').value;
                             var msg =
                                 lang == "es"
@@ -570,10 +635,8 @@ function intToEnglish(number) {
 }
 
 function initStripe(type, affected) {
-    var elements,
-    paymentElement,
-    clientSecret,
-    lang = "es";
+    var paymentElement,
+    clientSecret;
 
     let idService = getIdService();
 
@@ -631,14 +694,25 @@ function confirmSetupIntent(callback) {
             // errores por tarjeta bloqueada, numero incorrecto, rechazo del banco
             //ó error de procesamiento de stripe
             var message = result.error.message;
-            alert(message);
+
+            callback(result);
         } else {
             console.log("confirmSetupIntent Success");
             var setupIntent = {
               payment_method: result.setupIntent.payment_method,
               status: result.setupIntent.status,
             };
-            return setupIntent;
+            callback(setupIntent);
         }
     });
+}
+
+function showLoading(message) {
+  Swal.fire({
+    allowOutsideClick: false,
+    html: message,
+    didOpen: () => {
+      Swal.showLoading();
+    },
+  });
 }

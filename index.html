@@ -291,6 +291,30 @@
                                                 placeholder="Phone"
                                             />
                                         </div>
+
+                                        <div class="col-md-6 mb-3">
+                                            <select
+                                                name="holder[preferedLanguage]"
+                                                class="form-select form-select-lg"
+                                                aria-label="form-select-lg example"
+                                                aria-placeholder="Prefered Language"
+                                            >
+                                                <option selected>Prefered Language</option>
+                                                <option value="English">English</option>
+                                                <option value="Spanish">Spanish</option>
+                                            </select>
+                                        </div>
+
+                                        <div class="col-md-6 mb-3">
+                                            <select
+                                                name="holder[countryOfBirth]"
+                                                class="form-select form-select-lg strCountries"
+                                                aria-label="form-select-lg example"
+                                                aria-placeholder="Country of Birth"
+                                            >
+                                                <option selected>Country of Birth</option>
+                                            </select>
+                                        </div>
                                     </div>
                                     <div class="row mt-5">
                                         <div class="card-title text-primary">
@@ -358,12 +382,7 @@
                                                 value="0"
                                                 data-key="formTotalShow"
                                             />
-                                            <!--
-                                                TODO:Ajustar
-                                                el
-                                                TOTAL
-                                                SHOW
-                                        -->
+
                                             <div class="row example-template">
                                                 <div class="col-md-10 divRowArea"></div>
                                                 <div class="col-md-2 mb-3 divRowArea">

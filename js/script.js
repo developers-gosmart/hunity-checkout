@@ -63,6 +63,7 @@ async function getAllAsync() {
     try {
         state = await getState();
         relationShips = await getRelationShips();
+        countries = await getCountry();
 
         assignDatepicker();
         eventTrigger();

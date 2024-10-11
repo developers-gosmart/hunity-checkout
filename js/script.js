@@ -8,14 +8,96 @@ let totalShow = 0;
 let selectedPlanId = 0;
 
 getAllAsync();
+getAgentInfo();
+async function getAgentInfo(params) {  
+    let code_agent = getParameterByName("ca");
+ 
+    const response = await fetch(`${server}/ws/wizard/getagentinfo?=ca${code_agent}`);
+    if (!response.ok) {
+        throw new Error("Network response was not ok");
+    }
+    const response_1 = await response.json();
+    document.getElementById('imgAgent').setAttribute('src', 'https://media1.thrillophilia.com/filestore/8vh1qgvmud08c5vm2goj4aucretr_ew41nl9hgdajdas55cjfe02isgid_119.jpg');
+    document.getElementById('nameAgent').textContent = 'Manuel';
+    document.getElementById('phoneAgent').textContent = '123123123';
+    document.getElementById('emailAgent').textContent = 'manuel@gmail.com';
+}
 
-// Función para agregar opciones a un select
-function agregarOpciones(select, opciones) {
-    opciones.forEach((opcion) => {
-        const optionElement = document.createElement("option");
-        optionElement.value = opcion.id; // Usamos el id como valor
-        optionElement.textContent = opcion.name; // Usamos el nombre completo como texto visible
-        select.appendChild(optionElement);
+async function getAllAsync() {
+    console.log("getAllAsync");
+    try {
+        state = await getState();
+        relationShips = await getRelationShips();
+        countries = await getCountry();
+
+        assignDatepicker();
+        eventTrigger();
+        configSelect();
+    } catch (error) {
+        console.error("Error fetching countries:", error);
+    }
+}
+
+async function getCountry() {
+    const response = await fetch(server + "/ws/wizard/getcountry");
+    if (!response.ok) {
+        throw new Error("Network response was not ok");
+    }
+    const response_1 = await response.json();
+
+    return response_1.data;
+}
+
+async function getState() {
+    const response = await fetch(server + "/ws/wizard/states/list");
+    if (!response.ok) {
+        throw new Error("Network response was not ok");
+    }
+    const response_1 = await response.json();
+
+    return response_1.data;
+}
+
+async function getPlans(id) {
+    const response = await fetch(server + "/ws/wizard/plan/list?id_service=" + id);
+    if (!response.ok) {
+        throw new Error("Network response was not ok");
+    }
+    const response_1 = await response.json();
+    return response_1.data;
+}
+
+async function getRelationShips() {
+    const response = await fetch(server + "/ws/wizard/getrelationship");
+    if (!response.ok) {
+        throw new Error("Network response was not ok");
+    }
+    const response_1 = await response.json();
+    return response_1.data;
+}
+
+async function getListPlans() {
+    // Obtines el id del servicio
+    let idService = getIdService();
+
+    // console.log('serviceid',idService)
+    // Obtienes los planes asociados a ese servicio
+    plans = await getPlans(idService);
+    // console.log("planes",plans);
+    // Establece en el HTML el atributo data-id con los id_plan
+    // en cada radiolevel (a nivel de bd los planes)
+    setAttributeRadioLevel(plans); 
+}
+
+const assignDatepicker = () => {
+    $(function () {
+        var fechaMaxima = new Date();
+        fechaMaxima.setFullYear(fechaMaxima.getFullYear() - 75);
+
+        $(".datepicker").datepicker({
+            maxDate: fechaMaxima,
+            dateFormat: "mm-dd-yyyy",
+        });
     });
 }
 
@@ -55,35 +137,26 @@ const configSelect = () => {
             });
         }
     }
-};
-
-async function getAllAsync() {
-    console.log("getAllAsync");
-
-    try {
-        state = await getState();
-        relationShips = await getRelationShips();
-        countries = await getCountry();
-
-        assignDatepicker();
-        eventTrigger();
-        configSelect();
-    } catch (error) {
-        console.error("Error fetching countries:", error);
-    }
 }
 
-const assignDatepicker = () => {
-    $(function () {
-        var fechaMaxima = new Date();
-        fechaMaxima.setFullYear(fechaMaxima.getFullYear() - 75);
+function getParameterByName(name) {
+    name = name.replace(/[\[]/, "\\[").replace(/[\]]/, "\\]");
+    var regex = new RegExp("[\\?&]" + name + "=([^&#]*)"),
+        results = regex.exec(location.search);
+    return results === null
+        ? ""
+        : decodeURIComponent(results[1].replace(/\+/g, " "));
+}
 
-        $(".datepicker").datepicker({
-            maxDate: fechaMaxima,
-            dateFormat: "mm-dd-yyyy",
-        });
+// Función para agregar opciones a un select
+function agregarOpciones(select, opciones) {
+    opciones.forEach((opcion) => {
+        const optionElement = document.createElement("option");
+        optionElement.value = opcion.id; // Usamos el id como valor
+        optionElement.textContent = opcion.name; // Usamos el nombre completo como texto visible
+        select.appendChild(optionElement);
     });
-};
+}
 
 function eventTrigger() {
     //  DisplayHidden
@@ -132,43 +205,6 @@ function eventTrigger() {
     });
 }
 
-async function getCountry() {
-    const response = await fetch(server + "/ws/wizard/getcountry");
-    if (!response.ok) {
-        throw new Error("Network response was not ok");
-    }
-    const response_1 = await response.json();
-
-    return response_1.data;
-}
-
-async function getState() {
-    const response = await fetch(server + "/ws/wizard/states/list");
-    if (!response.ok) {
-        throw new Error("Network response was not ok");
-    }
-    const response_1 = await response.json();
-
-    return response_1.data;
-}
-
-async function getPlans(id) {
-    const response = await fetch(server + "/ws/wizard/plan/list?id_service=" + id);
-    if (!response.ok) {
-        throw new Error("Network response was not ok");
-    }
-    const response_1 = await response.json();
-    return response_1.data;
-}
-
-async function getRelationShips() {
-    const response = await fetch(server + "/ws/wizard/getrelationship");
-    if (!response.ok) {
-        throw new Error("Network response was not ok");
-    }
-    const response_1 = await response.json();
-    return response_1.data;
-}
 
 function getRules(id, value = "") {
     let idPlan = getIdPlan(); 
@@ -316,19 +352,6 @@ function getIdPlan() {
             .find((radioButton) => radioButton.checked)
             ?.getAttribute("data-id") || 0
     );
-}
-
-async function getListPlans() {
-    // Obtines el id del servicio
-    let idService = getIdService();
-
-    // console.log('serviceid',idService)
-    // Obtienes los planes asociados a ese servicio
-    plans = await getPlans(idService);
-    // console.log("planes",plans);
-    // Establece en el HTML el atributo data-id con los id_plan
-    // en cada radiolevel (a nivel de bd los planes)
-    setAttributeRadioLevel(plans); 
 }
 
 function setAttributeRadioLevel(plans) {
@@ -496,7 +519,6 @@ function limpiarTotalShow() {
     totalShow = 1;
     document.querySelector(`input[name="dependent[totalShow]"]`).value = totalShow;
 }
-
 
 function onSubmit() {
     // Selecciona el formulario

@@ -54,14 +54,14 @@
 
                     <!-- right elements -->
                     <div class="d-flex justify-content-start">
-                        <img src="https://mdbcdn.b-cdn.net/img/new/standard/city/047.webp"
+                        <img src="https://mdbcdn.b-cdn.net/img/new/standard/city/047.webp" id="imgAgent"
                             class="img-fluid rounded-circle-o" alt="Townhouses and Skyscrapers" />
                         <div class="agent-data">
                             <h6 class="fw-bold text-left">
-                                Name Agent
+                                <span id="nameAgent">Name Agent</span>
                                 <p class="text-checked text-small-header">
-                                    <span> 123-456-789</span><br />
-                                    <span>name@email.com</span>
+                                    <span id="phoneAgent"> 123-456-789</span><br />
+                                    <span id="emailAgent">name@email.com</span>
                                 </p>
                                 <p class="text-checked text-small"></p>
                             </h6>
@@ -285,12 +285,7 @@
                                     <div class="card-body">
                                         <input type="hidden" id="formTotalShow" name="dependent[totalShow]" value="0"
                                             data-key="formTotalShow" />
-                                        <!--
-                                                TODO:Ajustar
-                                                el
-                                                TOTAL
-                                                SHOW
-                                        -->
+
                                         <div class="row example-template">
                                             <div class="col-md-10 divRowArea"></div>
                                             <div class="col-md-2 mb-3 divRowArea">
@@ -348,7 +343,9 @@
                                             <div class="edit-area">
                                                 <div class="controls">
                                                     <button type="button" id="btnRepeatDepends"
-                                                        class="btn btn-secondary btn-rounded add" data-mdb-ripple-init>
+                                                        data-key="btnRepeatDepends"
+                                                        class="btn btn-secondary btn-rounded add btnRepeatDepends"
+                                                        data-mdb-ripple-init>
                                                         Add Dependent +
                                                     </button>
                                                 </div>

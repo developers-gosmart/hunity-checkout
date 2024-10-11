@@ -5,22 +5,28 @@ let state = [];
 let plans = [];
 let relationShips = [];
 let totalShow = 0;
+let itemNumber = 0;
 let selectedPlanId = 0;
+let id_user = 0;
 
 getAllAsync();
 getAgentInfo();
-async function getAgentInfo(params) {  
+async function getAgentInfo() {  
     let code_agent = getParameterByName("ca");
  
-    const response = await fetch(`${server}/ws/wizard/getagentinfo?=ca${code_agent}`);
+    const response = await fetch(`${server}/ws/wizard/getagentrandomcode?random_code_agent=${code_agent}`);
     if (!response.ok) {
         throw new Error("Network response was not ok");
     }
     const response_1 = await response.json();
-    document.getElementById('imgAgent').setAttribute('src', 'https://media1.thrillophilia.com/filestore/8vh1qgvmud08c5vm2goj4aucretr_ew41nl9hgdajdas55cjfe02isgid_119.jpg');
-    document.getElementById('nameAgent').textContent = 'Manuel';
-    document.getElementById('phoneAgent').textContent = '123123123';
-    document.getElementById('emailAgent').textContent = 'manuel@gmail.com';
+    let image =  response_1.data.image_url ? response_1.data.image_url : "https://upload.wikimedia.org/wikipedia/commons/a/a3/Image-not-found.png";
+    let code_cell = response_1.data.code_cell.substring(0, response_1.data.code_cell.indexOf("-"));
+    
+    id_user = response_1.data.id
+    document.getElementById('imgAgent').setAttribute('src', image);
+    document.getElementById('nameAgent').textContent = response_1.data.name_agent;
+    document.getElementById('phoneAgent').textContent = `+${code_cell}${response_1.data.cell}`;
+    document.getElementById('emailAgent').textContent = response_1.data.email; 
 }
 
 async function getAllAsync() {
@@ -322,7 +328,8 @@ function getRules(id, value = "") {
                     case "remove_dynamic":
                         divs.forEach((div) => {
                             if (div.hasChildNodes()) {
-                                while (div.childNodes.length >= 1) {
+                                if (div.childNodes.length >= 1) { 
+                                    // div.childNodes.display = "hidden"; 
                                     div.removeChild(div.firstChild);
                                 }
                             }
@@ -372,8 +379,7 @@ function setAttributeRadioLevel(plans) {
     if (plans[2].name === "Family") {
         const family = document.getElementById("radioChoseLevel3");
         family.setAttribute("data-id", plans[2].id);
-        family.value =  plans[2].id;
-        addDependents();
+        family.value =  plans[2].id;        
     } 
 }
  
@@ -470,25 +476,26 @@ async function calculatePayment() {
 function obtenerValorRadioSeleccionadojQuery(nombre) {
     return $('input[name="' + nombre + '"]:checked').val();
 }
-
+let isEventBound = false;
 function addDependents() {
     let itemTemplate = document.querySelector(".example-template").cloneNode(true);
     let editArea = document.querySelector(".edit-area");
     let rowArea = document.querySelector(".row-area");
-    let itemNumber = 2;
-    totalShow = 1;
-
-    document.addEventListener("click", function (event) {
+    totalShow= 1;
+    itemNumber= 1;
+   
+    if (!isEventBound) {
+    document.addEventListener("click", function (event) { 
         if (event.target.matches(".edit-area .add")) {
             let item = itemTemplate.cloneNode(true);
             let inputs = item.querySelectorAll("[name]");
-
+         
             inputs.forEach(function (input) {
                 let nameArray = input.name.split("[");
                 nameArray[1] = nameArray[1].replace("One", intToEnglish(itemNumber));
                 input.name = nameArray[0] + "[" + nameArray[1] + "[" + nameArray[2];
             });
-
+           
             itemNumber++;
             totalShow++;
             assignDatepicker();
@@ -498,6 +505,7 @@ function addDependents() {
         if (event.target.matches(".edit-area .rem")) {
             let lastItem = editArea.querySelector(".example-template:last-child");
             totalShow--;
+            itemNumber--;
             if (lastItem) {
                 editArea.removeChild(lastItem);
             }
@@ -507,16 +515,20 @@ function addDependents() {
             let row = event.target.closest(".example-template");
             if (row) {
                 totalShow--;
+                itemNumber--;
                 row.remove();
             }
         }
 
         document.querySelector(`input[name="dependent[totalShow]"]`).value = totalShow;
     });
+    isEventBound = true;
+    }
 }
 
 function limpiarTotalShow() {
     totalShow = 1;
+    itemNumber = 1;
     document.querySelector(`input[name="dependent[totalShow]"]`).value = totalShow;
 }
 
@@ -534,7 +546,32 @@ function onSubmit() {
     
 
     // Muestra el objeto JSON en la consola
-    console.log(JSON.stringify(data)); 
+   
+    let checkoutData = {
+        id_user: id_user,
+        dataJson: JSON.stringify(data)
+    }
+    console.log(JSON.stringify(checkoutData)); 
+    fetch(server + "/ws/wizard/datajsondv", {
+        method: 'POST', // Especificamos el método
+        headers: {
+            'Content-Type': 'application/json' // Indicamos que el contenido es JSON
+        },
+        body: JSON.stringify(checkoutData) // Convertimos el objeto JavaScript a una cadena JSON
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Error en la respuesta de la red');
+        }
+        return response.json(); // Parseamos la respuesta JSON
+    })
+    .then(data => {
+        console.log('Éxito:', data); // Manejo de la respuesta exitosa
+        alert("Exito", data)
+    })
+    .catch((error) => {
+        console.error('Error:', error); // Manejo de errores
+    });
 }
 
 function intToEnglish(number) {

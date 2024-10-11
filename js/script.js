@@ -53,6 +53,7 @@ function onSubmit(token) {
                         applicant: applicant,
                         setupIntent: response,
                         amount: document.querySelector('input[name="payment[amountDueToday]"]').value,
+                        idService: getIdService()
                     };
                     fetch(`${server}/ws/wizard/test`, {
                         method: 'POST', // O 'PUT', dependiendo de tu API
@@ -68,10 +69,58 @@ function onSubmit(token) {
                         return response.json(); // Convierte la respuesta a JSON
                     })
                     .then(data => {
-                        console.log('Éxito:', data); // Maneja la respuesta exitosa
+                        if (data.code == 210) {
+                            Swal.fire({
+                                title: data.message,
+                                text: lang == "es" 
+                                    ? "Le sugerimos agregar otra tarjeta o intentarlo nuevamente más tarde."
+                                    : "An error has occurred, we suggest adding another card or trying again later.",
+                                showDenyButton: true,
+                                showCancelButton: false,
+                                confirmButtonText: lang == "es" 
+                                    ? "Intentar luego"
+                                    : "Try later",
+                                denyButtonText: lang == "es" 
+                                    ? "Agregar otra tarjeta"
+                                    : "Add another card",
+                                allowOutsideClick: false,
+                                didOpen: () => {
+                                    // Agregar id y class a los botones
+                                    const confirmButton = Swal.getConfirmButton();
+                                    const denyButton = Swal.getDenyButton();
+
+                                    confirmButton.id = 'my-confirm-button'; // Agregar un id al botón de confirmar
+                                    confirmButton.classList.add('triggerRules'); // Agregar una clase al botón de confirmar
+
+                                    denyButton.id = 'my-deny-button'; // Agregar un id al botón de denegar
+                                    denyButton.classList.add('triggerRules'); // Agregar una clase al botón de denegar
+                                }
+                            }).then((result) => {
+                                if (result.isConfirmed) {
+                                    alert("llevar a la página de gracias.")
+                                    //history.back();
+                                } else if (result.isDenied) {
+                                    alert("Pintar nuevamente el elemento de pago ó reiniciar la regla de seleccion de pago (evaluar).")
+                                    //console.log("stripe payment 2");
+                                    //$("#modal_stripe").modal("hide");
+                                    //Control.getPaymentTypes();
+                                }
+                            });
+                        }else if(data.code == 200){
+                            Swal.fire({
+                                title: "Ok!",
+                                text: "El pago se realizó correctamente!",
+                                icon: "success"
+                            });
+                        }
                     })
                     .catch((error) => {
-                        console.error('Error:', error); // Maneja el error
+                        console.log("error", error);
+                        Swal.fire({
+                            title: "Ocurrió un error!",
+                            text: "Vuelve a intentarlo mas tarde ó comunícate con el administrador del sitio.",
+                            icon: "warning"
+                        });
                     });
                 }
             })

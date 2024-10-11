@@ -6,8 +6,7 @@ let plans = [];
 let relationShips = [];
 let totalShow = 0;
 let itemNumber = 0;
-let selectedPlanId = 0;
-let id_user = 0;
+let selectedPlanId = 0; 
 
 getAllAsync();
 getAgentInfo();
@@ -20,13 +19,13 @@ async function getAgentInfo() {
     }
     const response_1 = await response.json();
     let image =  response_1.data.image_url ? response_1.data.image_url : "https://upload.wikimedia.org/wikipedia/commons/a/a3/Image-not-found.png";
-    let code_cell = response_1.data.code_cell.substring(0, response_1.data.code_cell.indexOf("-"));
-    
-    id_user = response_1.data.id
+    let code_cell = response_1.data.code_cell.substring(0, response_1.data.code_cell.indexOf("-"));    
+ 
     document.getElementById('imgAgent').setAttribute('src', image);
     document.getElementById('nameAgent').textContent = response_1.data.name_agent;
     document.getElementById('phoneAgent').textContent = `+${code_cell}${response_1.data.cell}`;
     document.getElementById('emailAgent').textContent = response_1.data.email; 
+    document.getElementById('idAgent').value = response_1.data.id;
 }
 
 async function getAllAsync() {
@@ -534,8 +533,7 @@ function limpiarTotalShow() {
 
 function onSubmit() {
     // Selecciona el formulario
-    const form = document.getElementById("demo-form");
-    console.log(form);
+    const form = document.getElementById("demo-form"); 
     // Crea un objeto para almacenar los datos
      const data = $("#demo-form")
                 .find(":input")
@@ -545,19 +543,14 @@ function onSubmit() {
                 .serializeJSON(); 
     
 
-    // Muestra el objeto JSON en la consola
-   
-    let checkoutData = {
-        id_user: id_user,
-        dataJson: JSON.stringify(data)
-    }
-    console.log(JSON.stringify(checkoutData)); 
+    // Muestra el objeto JSON en la consola    
+     console.log(data);
     fetch(server + "/ws/wizard/datajsondv", {
         method: 'POST', // Especificamos el método
         headers: {
             'Content-Type': 'application/json' // Indicamos que el contenido es JSON
         },
-        body: JSON.stringify(checkoutData) // Convertimos el objeto JavaScript a una cadena JSON
+        body: JSON.stringify({dataJson: data}) 
     })
     .then(response => {
         if (!response.ok) {

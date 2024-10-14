@@ -8,8 +8,11 @@ let totalShow = 0;
 let itemNumber = 0;
 let selectedPlanId = 0; 
 
+var stripe, isCompletePaymentElement;
+
 getAllAsync();
 getAgentInfo();
+
 async function getAgentInfo() {  
     let code_agent = getParameterByName("ca");
  
@@ -152,7 +155,6 @@ function getParameterByName(name) {
         ? ""
         : decodeURIComponent(results[1].replace(/\+/g, " "));
 }
-
 // Función para agregar opciones a un select
 function agregarOpciones(select, opciones) {
     opciones.forEach((opcion) => {
@@ -209,7 +211,6 @@ function eventTrigger() {
         });
     });
 }
-
 
 function getRules(id, value = "") {
     let idPlan = getIdPlan(); 
@@ -472,9 +473,11 @@ async function calculatePayment() {
         });
 
 }
+
 function obtenerValorRadioSeleccionadojQuery(nombre) {
     return $('input[name="' + nombre + '"]:checked').val();
 }
+
 let isEventBound = false;
 function addDependents() {
     let itemTemplate = document.querySelector(".example-template").cloneNode(true);
@@ -622,3 +625,76 @@ function intToEnglish(number) {
     return result;
 }
  
+function initStripe(type, affected) {
+    var elements,
+    paymentElement,
+    clientSecret,
+    lang = "es";
+
+    let idService = getIdService();
+
+    fetch(`${server}/ws/wizard/getsetupintentstripe?id_service=${idService}&type=${type}`)
+    .then((response) => {
+      if (!response.ok) {
+        throw new Error("Network response was not ok");
+      }
+      return response.json();
+    })
+    .then((response) => {
+      var data = response;
+      stripe = Stripe(data.publishableKey, { locale: lang }); // clave publica stripe
+      const appearance = {
+        theme: "stripe",
+        variables: {
+          colorText: "#32325d",
+          fontFamily: '"Helvetica Neue", Helvetica, sans-serif',
+        },
+      };
+      clientSecret = data.setupIntent.client_secret;
+      const options = {
+        clientSecret: data.setupIntent.client_secret,
+        appearance: appearance,
+      };
+      elements = stripe.elements(options);
+      paymentElement = elements.create("payment");
+      paymentElement.mount(`#${affected}`);
+
+      paymentElement.addEventListener("change", (event) => {
+        if (event.complete) {
+          isCompletePaymentElement = true;
+        } else {
+          isCompletePaymentElement = false;
+        }
+      });
+    });
+}
+
+function confirmSetupIntent(callback) {
+    //Esta función se usa para confirmar el setupIntent de stripe cuando este es seleccionado como metodo de pago
+    //Esta devuelve el payment_method (metodo de pago ) el cual se le adjuntará al customer(aplicante)
+    //Y tambien el status (succeded ó required_action)
+    stripe
+    .confirmSetup({
+        elements,
+        redirect: "if_required",
+        confirmParams: {
+            // Return URL where the customer should be redirected after the SetupIntent is confirmed.
+        return_url: "https://angular.gosmartcrm.com",
+        },
+    })
+    .then(function (result) {
+        if (result.error) {
+            // errores por tarjeta bloqueada, numero incorrecto, rechazo del banco
+            //ó error de procesamiento de stripe
+            var message = result.error.message;
+            alert(message);
+        } else {
+            console.log("confirmSetupIntent Success");
+            var setupIntent = {
+            payment_method: result.setupIntent.payment_method,
+            status: result.setupIntent.status,
+            };
+            return setupIntent;
+        }
+    });
+}

@@ -6,26 +6,29 @@ let plans = [];
 let relationShips = [];
 let totalShow = 0;
 let itemNumber = 0;
-let selectedPlanId = 0; 
+let selectedPlanId = 0;
+let isEventBound = false;
 
 getAllAsync();
 getAgentInfo();
-async function getAgentInfo() {  
+async function getAgentInfo() {
     let code_agent = getParameterByName("ca");
- 
+
     const response = await fetch(`${server}/ws/wizard/getagentrandomcode?random_code_agent=${code_agent}`);
     if (!response.ok) {
         throw new Error("Network response was not ok");
     }
     const response_1 = await response.json();
-    let image =  response_1.data.image_url ? response_1.data.image_url : "https://upload.wikimedia.org/wikipedia/commons/a/a3/Image-not-found.png";
-    let code_cell = response_1.data.code_cell.substring(0, response_1.data.code_cell.indexOf("-"));    
- 
-    document.getElementById('imgAgent').setAttribute('src', image);
-    document.getElementById('nameAgent').textContent = response_1.data.name_agent;
-    document.getElementById('phoneAgent').textContent = `+${code_cell}${response_1.data.cell}`;
-    document.getElementById('emailAgent').textContent = response_1.data.email; 
-    document.getElementById('idAgent').value = response_1.data.id;
+    let image = response_1.data.image_url
+        ? response_1.data.image_url
+        : "https://upload.wikimedia.org/wikipedia/commons/a/a3/Image-not-found.png";
+    let code_cell = response_1.data.code_cell.substring(0, response_1.data.code_cell.indexOf("-"));
+
+    document.getElementById("imgAgent").setAttribute("src", image);
+    document.getElementById("nameAgent").textContent = response_1.data.name_agent;
+    document.getElementById("phoneAgent").textContent = `+${code_cell}${response_1.data.cell}`;
+    document.getElementById("emailAgent").textContent = response_1.data.email;
+    document.getElementById("idAgent").value = response_1.data.id;
 }
 
 async function getAllAsync() {
@@ -91,7 +94,7 @@ async function getListPlans() {
     // console.log("planes",plans);
     // Establece en el HTML el atributo data-id con los id_plan
     // en cada radiolevel (a nivel de bd los planes)
-    setAttributeRadioLevel(plans); 
+    setAttributeRadioLevel(plans);
 }
 
 const assignDatepicker = () => {
@@ -104,7 +107,7 @@ const assignDatepicker = () => {
             dateFormat: "mm-dd-yyyy",
         });
     });
-}
+};
 
 const configSelect = () => {
     const classNameMap = {
@@ -142,15 +145,13 @@ const configSelect = () => {
             });
         }
     }
-}
+};
 
 function getParameterByName(name) {
     name = name.replace(/[\[]/, "\\[").replace(/[\]]/, "\\]");
     var regex = new RegExp("[\\?&]" + name + "=([^&#]*)"),
         results = regex.exec(location.search);
-    return results === null
-        ? ""
-        : decodeURIComponent(results[1].replace(/\+/g, " "));
+    return results === null ? "" : decodeURIComponent(results[1].replace(/\+/g, " "));
 }
 
 // Función para agregar opciones a un select
@@ -210,9 +211,8 @@ function eventTrigger() {
     });
 }
 
-
 function getRules(id, value = "") {
-    let idPlan = getIdPlan(); 
+    let idPlan = getIdPlan();
 
     let planString = idPlan !== 0 ? `&id_plan=${idPlan}` : "";
 
@@ -223,7 +223,7 @@ function getRules(id, value = "") {
         .then((response) => {
             const rules = response.data;
             rules.forEach((rule) => {
-                // console.log("rule.affected >>> ", rule); 
+                // console.log("rule.affected >>> ", rule);
                 const elementById = rule.affected != "" ? document.getElementById(rule.affected) : "";
                 const dataRule = rule.dataRule;
                 const divs = document.querySelectorAll(`.${rule.affected}`);
@@ -238,17 +238,17 @@ function getRules(id, value = "") {
                             elementById.add(option);
                         });
                         break;
-                    case "selectListBeneficiaries": 
+                    case "selectListBeneficiaries":
                         elementById.innerHTML = "";
                         break;
                     case "set":
                         elementById.value = dataRule === "parent.value" ? value : dataRule;
                         break;
-                    case "checked":                        
+                    case "checked":
                         elementById.checked = dataRule;
                         break;
                     case "display":
-                        divs.forEach((div) => { 
+                        divs.forEach((div) => {
                             div.style.display = value == "Yes" ? "block" : "none";
                         });
                         break;
@@ -269,6 +269,12 @@ function getRules(id, value = "") {
                                 elementById.selectedIndex = 0; // Cambia el índice según la opción por defecto que desees
                                 elementById.classList.remove("deshabilitado");
                             }
+                        }
+                        if (divs) {
+                            divs.forEach((div) => {
+                                div.removeAttribute("required");
+                                div.style.borderColor = "";
+                            });
                         }
                         break;
                     case "disable":
@@ -323,15 +329,21 @@ function getRules(id, value = "") {
                         break;
                     case "applyFunction":
                         eval(`${dataRule}()`);
-                        break; 
+                        break;
                     case "remove_dynamic":
                         divs.forEach((div) => {
                             if (div.hasChildNodes()) {
-                                if (div.childNodes.length >= 1) { 
-                                    // div.childNodes.display = "hidden"; 
+                                if (div.childNodes.length >= 1) {
+                                    // div.childNodes.display = "hidden";
                                     div.removeChild(div.firstChild);
+                                    div.removeAttribute("required");
                                 }
                             }
+                        });
+                        break;
+                    case "required":
+                        divs.forEach((div) => {
+                            div.setAttribute("required", true);
                         });
                         break;
                     default:
@@ -351,9 +363,9 @@ function getIdService() {
     );
 }
 
-function getIdPlan() {      
-    const radioButtons = document.querySelectorAll('input[type="radio"][name="plan[typePlan]"]'); 
-    return  (
+function getIdPlan() {
+    const radioButtons = document.querySelectorAll('input[type="radio"][name="plan[typePlan]"]');
+    return (
         Array.from(radioButtons)
             .find((radioButton) => radioButton.checked)
             ?.getAttribute("data-id") || 0
@@ -361,27 +373,26 @@ function getIdPlan() {
 }
 
 function setAttributeRadioLevel(plans) {
- 
     // Establece en el HTML el atributo data-id con los id_plan
     if (plans[0].name === "Individual") {
         const individual = document.getElementById("radioChoseLevel1");
         individual.setAttribute("data-id", plans[0].id);
-        individual.value =  plans[0].id;
+        individual.value = plans[0].id;
     }
 
     if (plans[1].name === "Couple") {
         const couple = document.getElementById("radioChoseLevel2");
         couple.setAttribute("data-id", plans[1].id);
-        couple.value =  plans[1].id;
+        couple.value = plans[1].id;
     }
 
     if (plans[2].name === "Family") {
         const family = document.getElementById("radioChoseLevel3");
         family.setAttribute("data-id", plans[2].id);
-        family.value =  plans[2].id;        
-    } 
+        family.value = plans[2].id;
+    }
 }
- 
+
 function putServiceSummary() {
     let iconService = document.getElementById("icon-service"),
         textService = document.getElementById("text-service");
@@ -396,8 +407,8 @@ function putServiceSummary() {
         if (radio.checked) {
             icono.className = radio.getAttribute("data-icon") + " icon-plan";
             textService.innerHTML = radio.getAttribute("data-label");
-            iconService.appendChild(icono); 
-       
+            iconService.appendChild(icono);
+
             let radios_summary = Array.from(document.getElementsByClassName("radio-summary"));
             const dataId = radio.getAttribute("data-id");
 
@@ -413,8 +424,6 @@ function putServiceSummary() {
                     radio.style.opacity = 0.5;
                 }
             });
-
-           
         }
     }
 }
@@ -431,97 +440,118 @@ function putPlanSummary() {
         if (radio.checked) {
             icono.className = radio.getAttribute("data-icon") + " icon-plan";
             textPlan.innerHTML = radio.getAttribute("data-label");
-            iconPlan.appendChild(icono); 
+            iconPlan.appendChild(icono);
         }
     }
-} 
+}
 
 async function calculatePayment() {
     console.log("calculatePayment");
 
-    let idService = getIdService(); 
-    plans = await getPlans(idService); 
+    let idService = getIdService();
+    plans = await getPlans(idService);
     setAttributeRadioLevel(plans);
-    
+
     const selectedPlanId = getIdPlan();
     const idBillingPeriod = obtenerValorRadioSeleccionadojQuery("payment[billingPeriod]");
     const coupon = document.querySelector('input[name="payment[couponCode]"]').value;
 
-    console.log("selectedPlanId ", plans); 
+    console.log("selectedPlanId ", plans);
     console.log("idBilling ", idBillingPeriod);
     console.log("coupon ", coupon);
 
+    if (selectedPlanId) {
         fetch(`${server}/ws/wizard/getcalculate?id_plan=${selectedPlanId}&id_billing_period=${idBillingPeriod}&coupon=${coupon}`)
-        .then((response) => {
-            if (!response.ok) {
-                throw new Error("Network response was not ok");
-            }
-            return response.json();
-        })
-        .then((response) => {
-            const data = response.data;
-            for (const key in response.data) {
-                if (response.data.hasOwnProperty(key)) {
-                    const value = response.data[key];
-                    const element = document.querySelector(`input[name="${key}"]`);
-                    if (element) {
-                        element.value = value;
+            .then((response) => {
+                if (!response.ok) {
+                    throw new Error("Network response was not ok");
+                }
+                return response.json();
+            })
+            .then((response) => {
+                const data = response.data;
+                for (const key in response.data) {
+                    if (response.data.hasOwnProperty(key)) {
+                        const value = response.data[key];
+                        const element = document.querySelector(`input[name="${key}"]`);
+                        if (element) {
+                            element.value = value;
+                        }
                     }
                 }
-            }
-        });
-
+            });
+    }
 }
 function obtenerValorRadioSeleccionadojQuery(nombre) {
     return $('input[name="' + nombre + '"]:checked').val();
 }
-let isEventBound = false;
+
 function addDependents() {
     let itemTemplate = document.querySelector(".example-template").cloneNode(true);
     let editArea = document.querySelector(".edit-area");
     let rowArea = document.querySelector(".row-area");
-    totalShow= 1;
-    itemNumber= 1;
-   
+    totalShow = 1;
+    itemNumber = 1;
+
     if (!isEventBound) {
-    document.addEventListener("click", function (event) { 
-        if (event.target.matches(".edit-area .add")) {
-            let item = itemTemplate.cloneNode(true);
-            let inputs = item.querySelectorAll("[name]");
-         
-            inputs.forEach(function (input) {
-                let nameArray = input.name.split("[");
-                nameArray[1] = nameArray[1].replace("One", intToEnglish(itemNumber));
-                input.name = nameArray[0] + "[" + nameArray[1] + "[" + nameArray[2];
-            });
-           
-            itemNumber++;
-            totalShow++;
-            assignDatepicker();
-            rowArea.appendChild(item);
-        }
+        document.addEventListener("click", function (event) {
+            if (event.target.matches(".edit-area .add")) {
+                let item = itemTemplate.cloneNode(true);
+                let inputs = item.querySelectorAll("[name]");
 
-        if (event.target.matches(".edit-area .rem")) {
-            let lastItem = editArea.querySelector(".example-template:last-child");
-            totalShow--;
-            itemNumber--;
-            if (lastItem) {
-                editArea.removeChild(lastItem);
+                inputs.forEach(function (input) {
+                    let nameArray = input.name.split("[");
+                    nameArray[1] = nameArray[1].replace("One", intToEnglish(itemNumber));
+                    input.name = nameArray[0] + "[" + nameArray[1] + "[" + nameArray[2];
+                });
+
+                // Agregar evento al campo firstName
+                const firstNameInput = item.querySelector("#formFirstName");
+                if (firstNameInput) {
+                    firstNameInput.addEventListener("input", function () {
+                        let allInputs = item.querySelectorAll("[name]");
+                        if (firstNameInput.value.trim()) {
+                            // Si el campo tiene valor, establecer todos los inputs como requeridos
+                            allInputs.forEach(function (input) {
+                                input.setAttribute("required", "required");
+                            });
+                        } else {
+                            // Si el campo está vacío, eliminar el atributo requerido de todos los inputs
+                            allInputs.forEach(function (input) {
+                                input.removeAttribute("required");
+                                input.style.borderColor = ""; //Se quita el borde rojo de requerido al input
+                            });
+                        }
+                    });
+                }
+
+                itemNumber++;
+                totalShow++;
+                assignDatepicker();
+                rowArea.appendChild(item);
             }
-        }
 
-        if (event.target.matches(".row-area .del")) {
-            let row = event.target.closest(".example-template");
-            if (row) {
+            if (event.target.matches(".edit-area .rem")) {
+                let lastItem = editArea.querySelector(".example-template:last-child");
                 totalShow--;
                 itemNumber--;
-                row.remove();
+                if (lastItem) {
+                    editArea.removeChild(lastItem);
+                }
             }
-        }
 
-        document.querySelector(`input[name="dependent[totalShow]"]`).value = totalShow;
-    });
-    isEventBound = true;
+            if (event.target.matches(".row-area .del")) {
+                let row = event.target.closest(".example-template");
+                if (row) {
+                    totalShow--;
+                    itemNumber--;
+                    row.remove();
+                }
+            }
+
+            document.querySelector(`input[name="dependent[totalShow]"]`).value = totalShow;
+        });
+        isEventBound = true;
     }
 }
 
@@ -532,39 +562,51 @@ function limpiarTotalShow() {
 }
 
 function onSubmit() {
-    // Selecciona el formulario
-    const form = document.getElementById("demo-form"); 
-    // Crea un objeto para almacenar los datos
-     const data = $("#demo-form")
-                .find(":input")
-                .filter(function () {
-                  return $.trim(this.value).length >= 0;
-                })
-                .serializeJSON(); 
-    
+    const requiredFields = document.querySelectorAll("input[required], select[required], textarea[required]");
+    let allFilled = true;
 
-    // Muestra el objeto JSON en la consola    
-     console.log(data);
-    fetch(server + "/ws/wizard/datajsondv", {
-        method: 'POST', // Especificamos el método
-        headers: {
-            'Content-Type': 'application/json' // Indicamos que el contenido es JSON
-        },
-        body: JSON.stringify({dataJson: data}) 
-    })
-    .then(response => {
-        if (!response.ok) {
-            throw new Error('Error en la respuesta de la red');
+    // Verificar si todos los campos requeridos están llenos
+    requiredFields.forEach(function (field) {
+        if (!field.value.trim()) {
+            allFilled = false;
+            field.style.borderColor = "#b03535"; // Resaltar el campo vacío
+        } else {
+            field.style.borderColor = ""; // Restablecer el color del borde
         }
-        return response.json(); // Parseamos la respuesta JSON
-    })
-    .then(data => {
-        console.log('Éxito:', data); // Manejo de la respuesta exitosa
-        alert("Exito", data)
-    })
-    .catch((error) => {
-        console.error('Error:', error); // Manejo de errores
     });
+
+    const data = $("#demo-form")
+        .find(":input")
+        .filter(function () {
+            return $.trim(this.value).length >= 0;
+        })
+        .serializeJSON();
+
+    // Si todos los campos están llenos, se puede enviar el formulario
+    if (allFilled) {
+        fetch(server + "/ws/wizard/datajsondv", {
+            method: "POST", // Especificamos el método
+            headers: {
+                "Content-Type": "application/json", // Indicamos que el contenido es JSON
+            },
+            body: JSON.stringify({ dataJson: data }),
+        })
+            .then((response) => {
+                if (!response.ok) {
+                    throw new Error("Error en la respuesta de la red");
+                }
+                return response.json(); // Parseamos la respuesta JSON
+            })
+            .then((data) => {
+                console.log("Éxito:", data); // Manejo de la respuesta exitosa
+                alert("Exito", data);
+            })
+            .catch((error) => {
+                console.error("Error:", error); // Manejo de errores
+            });
+    } else {
+        alert("Por favor, completa todos los campos requeridos.");
+    }
 }
 
 function intToEnglish(number) {
@@ -621,4 +663,3 @@ function intToEnglish(number) {
     }
     return result;
 }
- 

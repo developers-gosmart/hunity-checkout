@@ -8,7 +8,8 @@ let totalShow = 0;
 let itemNumber = 0;
 let selectedPlanId = 0; 
 
-var stripe, isCompletePaymentElement;
+var stripe, elements, isCompletePaymentElement;
+var lang = "es";
 
 getAllAsync();
 getAgentInfo();
@@ -176,7 +177,7 @@ function eventTrigger() {
     const triggerElementsRadio = document.querySelectorAll("input[type='radio'].triggerRules");
     triggerElementsRadio.forEach((element) => {
         element.addEventListener("click", function () {
-            getRules(this.getAttribute("data-key"), this.getAttribute("data-value"));
+            getRules(this.getAttribute("data-key"), this.value);
         });
     });
 
@@ -207,6 +208,7 @@ function eventTrigger() {
     const triggerElementsSelect = document.querySelectorAll(".triggerRules>select");
     triggerElementsSelect.forEach((element) => {
         element.addEventListener("change", function () {
+            console.log("THIS VALUE: " , this.value)
             this.value != "" ? getRules(this.id, this.value) : "";
         });
     });
@@ -216,6 +218,9 @@ function getRules(id, value = "") {
     let idPlan = getIdPlan(); 
 
     let planString = idPlan !== 0 ? `&id_plan=${idPlan}` : "";
+
+    console.log("ID: " + id);
+    console.log("value: " + value);
 
     console.log(`${server}/ws/wizard/getrules?key=${id}&value=${value}${planString}`);
 
@@ -487,44 +492,44 @@ function addDependents() {
     itemNumber= 1;
    
     if (!isEventBound) {
-    document.addEventListener("click", function (event) { 
-        if (event.target.matches(".edit-area .add")) {
-            let item = itemTemplate.cloneNode(true);
-            let inputs = item.querySelectorAll("[name]");
-         
-            inputs.forEach(function (input) {
-                let nameArray = input.name.split("[");
-                nameArray[1] = nameArray[1].replace("One", intToEnglish(itemNumber));
-                input.name = nameArray[0] + "[" + nameArray[1] + "[" + nameArray[2];
-            });
-           
-            itemNumber++;
-            totalShow++;
-            assignDatepicker();
-            rowArea.appendChild(item);
-        }
-
-        if (event.target.matches(".edit-area .rem")) {
-            let lastItem = editArea.querySelector(".example-template:last-child");
-            totalShow--;
-            itemNumber--;
-            if (lastItem) {
-                editArea.removeChild(lastItem);
+        document.addEventListener("click", function (event) { 
+            if (event.target.matches(".edit-area .add")) {
+                let item = itemTemplate.cloneNode(true);
+                let inputs = item.querySelectorAll("[name]");
+            
+                inputs.forEach(function (input) {
+                    let nameArray = input.name.split("[");
+                    nameArray[1] = nameArray[1].replace("One", intToEnglish(itemNumber));
+                    input.name = nameArray[0] + "[" + nameArray[1] + "[" + nameArray[2];
+                });
+            
+                itemNumber++;
+                totalShow++;
+                assignDatepicker();
+                rowArea.appendChild(item);
             }
-        }
 
-        if (event.target.matches(".row-area .del")) {
-            let row = event.target.closest(".example-template");
-            if (row) {
+            if (event.target.matches(".edit-area .rem")) {
+                let lastItem = editArea.querySelector(".example-template:last-child");
                 totalShow--;
                 itemNumber--;
-                row.remove();
+                if (lastItem) {
+                    editArea.removeChild(lastItem);
+                }
             }
-        }
 
-        document.querySelector(`input[name="dependent[totalShow]"]`).value = totalShow;
-    });
-    isEventBound = true;
+            if (event.target.matches(".row-area .del")) {
+                let row = event.target.closest(".example-template");
+                if (row) {
+                    totalShow--;
+                    itemNumber--;
+                    row.remove();
+                }
+            }
+
+            document.querySelector(`input[name="dependent[totalShow]"]`).value = totalShow;
+        });
+        isEventBound = true;
     }
 }
 
@@ -534,26 +539,156 @@ function limpiarTotalShow() {
     document.querySelector(`input[name="dependent[totalShow]"]`).value = totalShow;
 }
 
-function onSubmit() {
+function onSubmit(token) {
+    showLoading("Por favor espere..!");
+    let paymentType = $("#formPaymentType").val();
+    let applicant = {
+        name: document.querySelector('input[name="holder[name]"]').value,
+        lastName: document.querySelector('input[name="holder[lastName]"]').value,
+        email: document.querySelector('input[name="holder[email]"]').value,
+    }
+
+    if (paymentType == 1) { // TARJETA DE CREDITO
+        //llamar todo lo relacionado a stripe e intentar pagar
+        //1- Confirm Setup
+        //2- crear customer
+        //3- Adjuntar metodo de pago al customer
+        //4- Ejecutar el pago
+        //5- Llamar a la funcion para guardar todos los campos del wizard
+        if(isCompletePaymentElement){
+            confirmSetupIntent(function(response){
+                console.log("response")
+                console.log(response)
+                if (response.error) {
+                    Swal.fire({
+                        title: response.error.message,
+                        text: 
+                            lang == "es" 
+                            ? "Tu tarjeta ha fallado, prueba con otra." 
+                            : "Your card has failed, try another one.",
+                        icon: "error"
+                    });
+                }else{
+                    //LLamar al servicio X, enviarle todo lo necesario para 
+                    //1 Crear el customer
+                    //2 Adjuntarle el metodo de pago
+                    //3 Intentar pagar
+                    //Si paga, se guarda toda la informacion de la aplicacion, si no, no!
+    
+                    let dataToSend = {
+                        applicant: applicant,
+                        setupIntent: response,
+                        amount: parseFloat(document.querySelector('input[name="payment[amountDueToday]"]').value),
+                        idService: getIdService()
+                    };
+                    console.log("dataToSend" , dataToSend)
+                    fetch(`${server}/ws/wizard/paymentStripe`, {
+                        method: 'POST', // O 'PUT', dependiendo de tu API
+                        headers: {
+                            'Content-Type': 'application/json', // Especifica que envías JSON
+                        },
+                        body: JSON.stringify(dataToSend) // Convierte el objeto a JSON
+                    })
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Error en la red');
+                        }
+                        return response.json(); // Convierte la respuesta a JSON
+                    })
+                    .then(data => {
+                        console.log('Éxito:', data); // Maneja la respuesta exitosa
+                        if (data.code == 210) {
+                            Swal.fire({
+                                title: data.message,
+                                text: lang == "es" 
+                                    ? "Le sugerimos agregar otra tarjeta o intentarlo nuevamente más tarde."
+                                    : "An error has occurred, we suggest adding another card or trying again later.",
+                                showDenyButton: true,
+                                showCancelButton: false,
+                                confirmButtonText: lang == "es" 
+                                    ? "Intentar luego"
+                                    : "Try later",
+                                denyButtonText: lang == "es" 
+                                    ? "Agregar otra tarjeta"
+                                    : "Add another card",
+                                allowOutsideClick: false,
+                                didOpen: () => {
+                                    // Agregar id y class a los botones
+                                    const confirmButton = Swal.getConfirmButton();
+                                    const denyButton = Swal.getDenyButton();
+                                    confirmButton.id = 'my-confirm-button'; // Agregar un id al botón de confirmar
+                                    confirmButton.classList.add('triggerRules'); // Agregar una clase al botón de confirmar
+                                    denyButton.id = 'my-deny-button'; // Agregar un id al botón de denegar
+                                    denyButton.classList.add('triggerRules'); // Agregar una clase al botón de denegar
+                                }
+                            }).then((result) => {
+                                if (result.isConfirmed) {
+                                    alert("llevar a la página de gracias.")
+                                    //history.back();
+                                } else if (result.isDenied) {
+                                    alert("Pintar nuevamente el elemento de pago ó reiniciar la regla de seleccion de pago (evaluar).")
+                                    //console.log("stripe payment 2");
+                                    //$("#modal_stripe").modal("hide");
+                                    //Control.getPaymentTypes();
+                                }
+                            });
+                        }else if(data.code == 200){
+                            showLoading("Pago realizado correctamente, por favor espere un poco mas..!"); 
+                            saveApplication(data.idApplicant);
+                        }
+                    })
+                    .catch((error) => {
+                        console.error('Error:', error); // Maneja el error
+
+                        Swal.fire({
+                            title: "Ocurrió un error!",
+                            text: "Vuelve a intentarlo mas tarde ó comunícate con el administrador del sitio.",
+                            icon: "warning"
+                        });
+                    });
+                }
+            });
+        }else{
+            //ajustar y clocar boton "OK" al alert
+            Swal.fire({
+                title: "",
+                text: "El numero de tarjeta es incorrecto o está incompleto",
+                icon: "error"
+            });
+        }
+    }else if (paymentType == 2){ // CUENTA BANCARIA
+
+    }else if (paymentType == 3){ // OTHER
+
+    }
+}
+
+function saveApplication(idApplicant) {
     // Selecciona el formulario
     const form = document.getElementById("demo-form"); 
     // Crea un objeto para almacenar los datos
-     const data = $("#demo-form")
+    const data = $("#demo-form")
                 .find(":input")
                 .filter(function () {
                   return $.trim(this.value).length >= 0;
                 })
                 .serializeJSON(); 
-    
 
+    const applicant = {
+        "applicant":{
+            "idApplicant":3
+        }
+    };
+    
+    const newData = Object.assign({}, data, applicant);
     // Muestra el objeto JSON en la consola    
-     console.log(data);
+    console.log(data);
     fetch(server + "/ws/wizard/datajsondv", {
         method: 'POST', // Especificamos el método
         headers: {
             'Content-Type': 'application/json' // Indicamos que el contenido es JSON
         },
-        body: JSON.stringify({dataJson: data}) 
+        body: JSON.stringify({dataJson: newData}) 
     })
     .then(response => {
         if (!response.ok) {
@@ -563,7 +698,11 @@ function onSubmit() {
     })
     .then(data => {
         console.log('Éxito:', data); // Manejo de la respuesta exitosa
-        alert("Exito", data)
+        Swal.fire({
+            title: "Felicidades!",
+            text: "El proceso se completó de manera exitosa..!",
+            icon: "success"
+        });
     })
     .catch((error) => {
         console.error('Error:', error); // Manejo de errores
@@ -626,8 +765,7 @@ function intToEnglish(number) {
 }
  
 function initStripe(type, affected) {
-    var elements,
-    paymentElement,
+    var paymentElement,
     clientSecret,
     lang = "es";
 
@@ -687,14 +825,24 @@ function confirmSetupIntent(callback) {
             // errores por tarjeta bloqueada, numero incorrecto, rechazo del banco
             //ó error de procesamiento de stripe
             var message = result.error.message;
-            alert(message);
+            callback(result);
         } else {
             console.log("confirmSetupIntent Success");
             var setupIntent = {
-            payment_method: result.setupIntent.payment_method,
-            status: result.setupIntent.status,
+                payment_method: result.setupIntent.payment_method,
+                status: result.setupIntent.status,
             };
-            return setupIntent;
+            callback(setupIntent);
         }
+    });
+}
+
+function showLoading(message) {
+    Swal.fire({
+        allowOutsideClick: false,
+        html: message,
+        didOpen: () => {
+            Swal.showLoading();
+        },
     });
 }

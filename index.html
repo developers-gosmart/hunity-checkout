@@ -269,6 +269,7 @@
                                                 class="form-control form-control-lg"
                                                 placeholder="Email"
                                                 required
+                                                onfocusout="validateEmail(this)"
                                             />
                                         </div>
 
@@ -314,6 +315,7 @@
                                                 aria-label="form-select-lg example"
                                                 aria-placeholder="Prefered Language"
                                                 required
+                                                onchange="setLanguage(this)"
                                             >
                                                 <option selected value="">Prefered Language</option>
                                                 <option value="English">English</option>
@@ -744,6 +746,7 @@
                                                 autocomplete="off"
                                                 data-key="optionPrice1"
                                                 value="1"
+                                                data-value="1"
                                                 required
                                             />
                                             <label class="btn btn-secondary" for="option1" data-mdb-ripple-init>Monthly</label>
@@ -756,6 +759,7 @@
                                                 data-key="optionPrice2"
                                                 autocomplete="off"
                                                 value="6"
+                                                data-value="6"
                                                 required
                                             />
                                             <label class="btn btn-secondary" for="option2" data-mdb-ripple-init>Annual</label>
@@ -768,6 +772,7 @@
                                                 data-key="optionPrice3"
                                                 autocomplete="off"
                                                 value="14"
+                                                data-value="14"
                                                 required
                                             />
                                             <label class="btn btn-secondary" for="option3" data-mdb-ripple-init>2 Years</label>
@@ -939,6 +944,8 @@
         <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js"></script>
         <!-- Custom scripts -->
         <script type="text/javascript" src="js/jquery.serializejson.js"></script>
+        <script src="https://js.stripe.com/v3/"></script>
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.all.min.js"></script> 
         <script type="text/javascript" src="js/script.js"></script>
     </body>
 </html>

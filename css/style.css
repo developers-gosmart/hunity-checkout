@@ -221,3 +221,8 @@
     /* opacity: 0.5;  */
     /* Cambia la opacidad para indicar que está deshabilitado */
 }
+
+.my--25{
+    margin-top: -30px;
+    margin-bottom: -25px;
+}

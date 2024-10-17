@@ -57,7 +57,7 @@ async function getAllAsync() {
         relationShips = await getRelationShips();
         countries = await getCountry();
 
-        assignDatepicker(); eventTrigger(); configSelect();
+        assignDatepicker(); eventTrigger(); configSelect(); moveSummary();
     } catch (error){ 
         console.error("Error fetching countries:", error);
     }
@@ -977,5 +977,17 @@ function setLanguage(input) {
     const inputValue = input.value;
     if(inputValue !== ""){
         lang = inputValue;
+    }
+}
+
+function moveSummary() {
+    const summary = document.querySelector('.div-summary');
+    const level = document.querySelector('.div-level');
+
+    if (window.innerWidth < 1000) { 
+        if (level && summary) {
+            console.log("WINDOW 2")
+            level.parentNode.insertBefore(summary, level.nextSibling);
+        }
     }
 }

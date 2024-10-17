@@ -845,7 +845,7 @@ function stripePayment(applicant) {
                         },
                         amount: parseFloat(document.querySelector('input[name="payment[amountDueToday]"]').value),
                         idService: getIdService(),
-                        planName: "PlanNameTest"
+                        idPlan: getIdPlan()
                     };
                     console.log("dataToSend" , dataToSend)
                     fetch(`${server}/ws/wizard/paymentStripe`, {
@@ -867,8 +867,8 @@ function stripePayment(applicant) {
                             Swal.fire({
                                 title: data.message,
                                 text: lang == "Spanish" 
-                                    ? "Le sugerimos agregar otra tarjeta o intentarlo nuevamente más tarde."
-                                    : "An error has occurred, we suggest adding another card or trying again later.",
+                                    ? "Por favor, revise los datos de su tarjeta, intente con una tarjeta diferente o vuelva a intentarlo más tarde."
+                                    : "Please check your card details, try a different card, or try again later.",
                                 showDenyButton: true,
                                 showCancelButton: false,
                                 denyButtonText: lang == "Spanish" 

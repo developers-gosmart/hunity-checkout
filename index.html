@@ -397,7 +397,7 @@
                                         <div class="card-title text-primary-o">
                                             <b class="text-normal">Dependent(s)</b>
                                         </div>
-                                        <div class="card-body">
+                                        <div class="card-body my--25">
                                             <input
                                                 type="hidden"
                                                 id="formTotalShow"
@@ -407,14 +407,12 @@
                                             />
 
                                             <div class="row example-template">
-                                                <div class="col-md-10 divRowArea"></div>
-                                                <div class="col-md-2 mb-3 divRowArea">
+                                                <div class="col-md-2 offset-md-10 divRowArea">
                                                     <button type="button" class="btn btn-light btn-sm del my-2">
                                                         <span class="text-danger del">Delete </span>
                                                         <i class="fas fa-trash text-danger del"></i>
                                                     </button>
                                                 </div>
-
                                                 <div class="col-md-6 mb-3">
                                                     <input
                                                         type="text"
@@ -435,7 +433,6 @@
                                                         data-key="formLastName"
                                                     />
                                                 </div>
-
                                                 <div class="col-md-4 mb-3">
                                                     <select
                                                         id="formRelationship"
@@ -458,8 +455,8 @@
                                                         data-key="formGender"
                                                     >
                                                         <option selected value="">Gender</option>
-                                                        <option value="1">Male</option>
-                                                        <option value="2">Female</option>
+                                                        <option value="Male">Male</option>
+                                                        <option value="Female">Female</option>
                                                     </select>
                                                 </div>
                                                 <div class="col-md-4 mb-3">
@@ -475,20 +472,20 @@
                                                 <hr />
                                             </div>
                                             <div class="row-area my-2 display_hidden divRowArea" data-key="divRowArea"></div>
-                                        </div>
-                                        <div class="card-footer display_hidden divEditArea" data-key="divEditArea">
-                                            <div class="d-flex justify-content-lg-end">
-                                                <div class="edit-area">
-                                                    <div class="controls">
-                                                        <button
-                                                            type="button"
-                                                            id="btnRepeatDepends"
-                                                            data-key="btnRepeatDepends"
-                                                            class="btn btn-secondary btn-rounded add btnRepeatDepends"
-                                                            data-mdb-ripple-init
-                                                        >
-                                                            Add Dependent +
-                                                        </button>
+                                            <div class="display_hidden divEditArea" data-key="divEditArea">
+                                                <div class="d-flex justify-content-lg-end">
+                                                    <div class="edit-area">
+                                                        <div class="controls">
+                                                            <button
+                                                                type="button"
+                                                                id="btnRepeatDepends"
+                                                                data-key="btnRepeatDepends"
+                                                                class="btn btn-secondary btn-rounded add btnRepeatDepends"
+                                                                data-mdb-ripple-init
+                                                            >
+                                                                Add Dependent +
+                                                            </button>
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>

@@ -1,4 +1,5 @@
 const server = "https://wshunitydev.gosmartcrm.com:4000";
+//const server = "https://c3cz2b68-4000.use2.devtunnels.ms"; // test
 
 let countries = [];
 let state = [];
@@ -9,8 +10,12 @@ let itemNumber = 0;
 let selectedPlanId = 0;
 let isEventBound = false;
 
+let stripe, elements, isCompletePaymentElement;
+let lang = "Spanish";
+
 getAllAsync();
 getAgentInfo();
+
 async function getAgentInfo() {
     let code_agent = getParameterByName("ca");
 
@@ -38,13 +43,8 @@ async function getAllAsync() {
         relationShips = await getRelationShips();
         countries = await getCountry();
 
-        assignDatepicker();
-        eventTrigger();
-        configSelect();
-    } catch (error) {
-        console.error("Error fetching countries:", error);
-    }
-}
+        assignDatepicker(); eventTrigger(); configSelect(); } catch (error)
+        { console.error("Error fetching countries:", error); } }
 
 async function getCountry() {
     const response = await fetch(server + "/ws/wizard/getcountry");
@@ -153,7 +153,6 @@ function getParameterByName(name) {
         results = regex.exec(location.search);
     return results === null ? "" : decodeURIComponent(results[1].replace(/\+/g, " "));
 }
-
 // Función para agregar opciones a un select
 function agregarOpciones(select, opciones) {
     opciones.forEach((opcion) => {
@@ -175,6 +174,7 @@ function eventTrigger() {
     const triggerElementsRadio = document.querySelectorAll("input[type='radio'].triggerRules");
     triggerElementsRadio.forEach((element) => {
         element.addEventListener("click", function () {
+            console.log("CLICKKK: ", this)
             getRules(this.getAttribute("data-key"), this.getAttribute("data-value"));
         });
     });
@@ -206,8 +206,18 @@ function eventTrigger() {
     const triggerElementsSelect = document.querySelectorAll(".triggerRules>select");
     triggerElementsSelect.forEach((element) => {
         element.addEventListener("change", function () {
+            console.log("THIS VALUE: " , this.value)
             this.value != "" ? getRules(this.id, this.value) : "";
         });
+    });
+
+    document.body.addEventListener("click", function(event) {
+        if (event.target && event.target.id === "btnConfirmAnotherCard") {
+            getRules(event.target.getAttribute('data-key'), event.target.getAttribute('data-value'))
+        }
+        if (event.target && event.target.id === "btnTryLater") {
+            getRules(event.target.id)
+        }
     });
 }
 
@@ -215,6 +225,9 @@ function getRules(id, value = "") {
     let idPlan = getIdPlan();
 
     let planString = idPlan !== 0 ? `&id_plan=${idPlan}` : "";
+
+    console.log("ID : ", id);
+    console.log("value : ", value);
 
     console.log(`${server}/ws/wizard/getrules?key=${id}&value=${value}${planString}`);
 
@@ -300,10 +313,9 @@ function getRules(id, value = "") {
                             elementById.innerHTML = "";
                         } else if (value == 3) {
                             // 3: Zelle
-                            var lang = "es"; //test
                             var amount = document.querySelector('input[name="payment[amountDueToday]"]').value;
                             var msg =
-                                lang == "es"
+                                lang == "Spanish"
                                     ? `Estimado cliente por favor envié su pago de <strong>$${amount}</strong> a la cuenta <strong>Zelle@InterLifeGroup.com.</strong> En la descripción debe incluir nombre del titular del plan.`
                                     : `Dear customer, please send your payment of $${amount} to the account Zelle@InterLifeGroup.com. In the description you must include the name of the plan holder.`;
                             var html = `<div class="alert alert-info" role="alert">
@@ -460,7 +472,7 @@ async function calculatePayment() {
     console.log("idBilling ", idBillingPeriod);
     console.log("coupon ", coupon);
 
-    if (selectedPlanId) {
+    if (selectedPlanId && idBillingPeriod) {
         fetch(`${server}/ws/wizard/getcalculate?id_plan=${selectedPlanId}&id_billing_period=${idBillingPeriod}&coupon=${coupon}`)
             .then((response) => {
                 if (!response.ok) {
@@ -482,6 +494,7 @@ async function calculatePayment() {
             });
     }
 }
+
 function obtenerValorRadioSeleccionadojQuery(nombre) {
     return $('input[name="' + nombre + '"]:checked').val();
 }
@@ -562,19 +575,73 @@ function limpiarTotalShow() {
 }
 
 function onSubmit() {
-    const requiredFields = document.querySelectorAll("input[required], select[required], textarea[required]");
+    const requiredFields = document.querySelectorAll("input[required], select[required], textarea[required], input[type='radio'][required]");
     let allFilled = true;
 
     // Verificar si todos los campos requeridos están llenos
     requiredFields.forEach(function (field) {
-        if (!field.value.trim()) {
-            allFilled = false;
-            field.style.borderColor = "#b03535"; // Resaltar el campo vacío
-        } else {
-            field.style.borderColor = ""; // Restablecer el color del borde
+        if (field.type === 'radio') {
+            // Agrupar los radios por nombre
+            const group = document.querySelectorAll(`input[name="${field.name}"]`);
+            const isChecked = Array.from(group).some(radio => radio.checked);
+            let container; // Cambia esto si tu estructura HTML es diferente
+            
+            // Seleccionar el contenedor del grupo de radios
+            if (field.name == "payment[billingPeriod]") {
+                container = field.parentNode; // Cambia esto si tu estructura HTML es diferente
+            }else{
+                container = field.closest('.div-check-card-inside');
+            }
+
+            if (!isChecked) {
+                allFilled = false;
+                container.style.borderColor = "#b03535"; // Resaltar el grupo de radios vacío
+                container.style.borderWidth = "2px"; // Puedes ajustar el grosor del borde
+                container.style.borderStyle = "solid"; // Estilo del borde
+            } else {
+                container.style.borderColor = ""; // Restablecer el color del borde
+                container.style.borderWidth = ""; // Restablecer el grosor del borde
+                container.style.borderStyle = ""; // Restablecer el estilo del borde
+            }
+        }  else {
+            if (!field.value.trim()) {
+                allFilled = false;
+                field.style.borderColor = "#b03535"; // Resaltar el campo vacío
+            } else {
+                field.style.borderColor = ""; // Restablecer el color del borde
+            }
         }
     });
 
+    // Si todos los campos están llenos, se puede enviar el formulario
+    if (allFilled) {
+        let paymentType = $("#formPaymentType").val();
+        let applicant = {
+            name: document.querySelector('input[name="holder[name]"]').value,
+            lastName: document.querySelector('input[name="holder[lastName]"]').value,
+            email: document.querySelector('input[name="holder[email]"]').value,
+        }
+
+        if (paymentType == 1) { // TARJETA DE CREDITO
+            stripePayment(applicant); //
+        }else if (paymentType == 2){ // CUENTA BANCARIA
+            //funcion para pagar cuenta bancaria
+        }else if (paymentType == 3){ // OTHER
+            //funcion para pagar con otro metodo
+        } // else if etc etc para pagar con algun otro metodo de pago
+    } else {
+        Swal.fire({
+            title: "Ups..!",
+            text: 
+                lang == "Spanish"
+                ? "Debes completar todos los campos del formulario."
+                : "You must complete all the fields of the form.",
+            icon: "warning"
+        });
+    }
+}
+
+function saveApplication(idApplicant, object) {
     const data = $("#demo-form")
         .find(":input")
         .filter(function () {
@@ -582,31 +649,67 @@ function onSubmit() {
         })
         .serializeJSON();
 
-    // Si todos los campos están llenos, se puede enviar el formulario
-    if (allFilled) {
-        fetch(server + "/ws/wizard/datajsondv", {
-            method: "POST", // Especificamos el método
-            headers: {
-                "Content-Type": "application/json", // Indicamos que el contenido es JSON
-            },
-            body: JSON.stringify({ dataJson: data }),
+    const applicant = {
+        "applicant":{
+            "idApplicant": idApplicant
+        }
+    };
+    
+    const newData = Object.assign({}, data, applicant);
+
+    let combinedData = [];
+    combinedData.push(newData);
+    combinedData.push(JSON.parse(object));
+
+    fetch(server + "/ws/wizard/datajsondv", {
+        method: "POST", // Especificamos el método
+        headers: {
+            "Content-Type": "application/json", // Indicamos que el contenido es JSON
+        },
+        body: JSON.stringify({ dataJson: combinedData })
+    })
+    .then((response) => {
+        if (!response.ok) {
+            throw new Error("Error en la respuesta de la red");
+        }
+        return response.json(); // Parseamos la respuesta JSON
+    })
+    .then((data) => {
+        console.log("Éxito:", data); // Manejo de la respuesta exitosa
+        Swal.fire({
+            title: 
+                lang == "Spanish" 
+                ? "Felicidades!"
+                : "Congratulations!",
+            text: 
+                lang == "Spanish"
+                ? "El proceso se completó de manera exitosa..!"
+                : "The process was completed successfully..!",
+            icon: "success",
+            showDenyButton: false,
+            showCancelButton: false,
+            confirmButtonText: "Ok",
+            allowOutsideClick: false,
         })
-            .then((response) => {
-                if (!response.ok) {
-                    throw new Error("Error en la respuesta de la red");
+        .then((result) => {
+            if (result.isConfirmed) {
+                showLoading("");
+                if(lang == "Spanish"){
+                    location.href = 'https://hunitycare.com/gracias/';
+                }else{
+                    location.href = 'https://hunitycare.com/thank-you/';
                 }
-                return response.json(); // Parseamos la respuesta JSON
-            })
-            .then((data) => {
-                console.log("Éxito:", data); // Manejo de la respuesta exitosa
-                alert("Exito", data);
-            })
-            .catch((error) => {
-                console.error("Error:", error); // Manejo de errores
-            });
-    } else {
-        alert("Por favor, completa todos los campos requeridos.");
-    }
+            }
+        });
+    })
+    .catch((error) => {
+        Swal.fire({
+            title: "Ups",
+            text: `Ha ocurrido un error, informa al administrador y toma captura de este mensaje: (codigo: ${idApplicant})`,
+            icon: "error"
+        });
+        console.error("Error:", error); // Manejo de errores
+    });
 }
 
 function intToEnglish(number) {
@@ -662,4 +765,200 @@ function intToEnglish(number) {
         }
     }
     return result;
+}
+ 
+function initStripe(type, affected) {
+    var paymentElement,
+    clientSecret;
+    var language = lang == "Spanish" ? "es" : "en";
+
+    let idService = getIdService();
+
+    fetch(`${server}/ws/wizard/getsetupintentstripe?id_service=${idService}&type=${type}`)
+    .then((response) => {
+      if (!response.ok) {
+        throw new Error("Network response was not ok");
+      }
+      return response.json();
+    })
+    .then((response) => {
+      var data = response;
+      stripe = Stripe(data.publishableKey, { locale: language }); // clave publica stripe
+      const appearance = {
+        theme: "stripe",
+        variables: {
+          colorText: "#32325d",
+          fontFamily: '"Helvetica Neue", Helvetica, sans-serif',
+        },
+      };
+      clientSecret = data.setupIntent.client_secret;
+      const options = {
+        clientSecret: data.setupIntent.client_secret,
+        appearance: appearance,
+      };
+      elements = stripe.elements(options);
+      paymentElement = elements.create("payment");
+      paymentElement.mount(`#${affected}`);
+
+      paymentElement.addEventListener("change", (event) => {
+        if (event.complete) {
+          isCompletePaymentElement = true;
+        } else {
+          isCompletePaymentElement = false;
+        }
+      });
+    });
+}
+
+function stripePayment(applicant) {
+    showLoading("Por favor espere..!");
+    setTimeout(function(){
+        if(isCompletePaymentElement){
+            stripe
+            .confirmSetup({
+                elements,
+                redirect: "if_required",
+                confirmParams: {
+                    // Return URL where the customer should be redirected after the SetupIntent is confirmed.
+                return_url: "https://angular.gosmartcrm.com",
+                },
+            })
+            .then(function (result) {
+                if (result.error) {
+                    // errores por tarjeta bloqueada, numero incorrecto, rechazo del banco
+                    //ó error de procesamiento de stripe
+                    var message = result.error.message;
+                    Swal.fire({
+                        title: message,
+                        text: 
+                            lang == "Spanish" 
+                            ? "Su número de tarjeta no es válido, prueba con otra." 
+                            : "Your card number is not valid, try another.",
+                        icon: "error"
+                    });
+                } else {
+                    let dataToSend = {
+                        applicant: applicant,
+                        setupIntent: {
+                            payment_method: result.setupIntent.payment_method,
+                            status: result.setupIntent.status,
+                        },
+                        amount: parseFloat(document.querySelector('input[name="payment[amountDueToday]"]').value),
+                        idService: getIdService(),
+                        idPlan: getIdPlan()
+                    };
+                    console.log("dataToSend" , dataToSend)
+                    fetch(`${server}/ws/wizard/paymentStripe`, {
+                        method: 'POST', // O 'PUT', dependiendo de tu API
+                        headers: {
+                            'Content-Type': 'application/json', // Especifica que envías JSON
+                        },
+                        body: JSON.stringify(dataToSend) // Convierte el objeto a JSON
+                    })
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Error en la red');
+                        }
+                        return response.json(); // Convierte la respuesta a JSON
+                    })
+                    .then(data => {
+                        console.log('Éxito:', data); // Maneja la respuesta exitosa
+                        if (data.code == 210) {
+                            Swal.fire({
+                                title: data.message,
+                                text: lang == "Spanish" 
+                                    ? "Por favor, revise los datos de su tarjeta, intente con una tarjeta diferente o vuelva a intentarlo más tarde."
+                                    : "Please check your card details, try a different card, or try again later.",
+                                showDenyButton: true,
+                                showCancelButton: false,
+                                denyButtonText: lang == "Spanish" 
+                                    ? "Intentar luego"
+                                    : "Try later",
+                                confirmButtonText: lang == "Spanish" 
+                                    ? "Intentar nuevamente"
+                                    : "Try again",
+                                allowOutsideClick: false,
+                                didOpen: () => {
+                                    // Agregar id y class a los botones
+                                    const confirmButton = Swal.getConfirmButton();
+                                    confirmButton.id = 'btnConfirmAnotherCard'; // Agregar un id al botón de confirmar
+                                    confirmButton.classList.add('triggerRules'); // Agregar una clase al botón de confirmar
+                                    confirmButton.setAttribute('data-key', 'AnotherCard');
+                                    confirmButton.setAttribute('data-value', obtenerValorRadioSeleccionadojQuery("payment[billingPeriod]"));
+
+                                    const denyButton = Swal.getDenyButton();
+                                    denyButton.id = 'btnTryLater'; // Agregar un id al botón de denegar
+                                    denyButton.classList.add('triggerRules'); // Agregar una clase al botón de denegar
+                                }
+                            }).then((result) => {
+                                if (result.isConfirmed) {
+                                    //Aplica la regla "AnotherCard" automaticamente
+                                } else if (result.isDenied) {
+                                    showLoading("Ok");
+                                    setTimeout(() => {
+                                        location.reload();
+                                    }, 2000);
+                                }
+                            });
+                        }else if(data.code == 200){
+                            showLoading("Pago realizado correctamente, por favor espere un poco mas..!");
+                            //PAGO EXITOSO, ENTONCES LLAMAR A LA FUNCION PARA GUARDAR EL FORMULARIO COMPLETO
+                            saveApplication(data.idApplicant, data.object);
+                        }
+                    })
+                    .catch((error) => {
+                        console.error('Error:', error); // Maneja el error
+
+                        Swal.fire({
+                            title: "Ocurrió un error!",
+                            text: "Vuelve a intentarlo mas tarde ó comunícate con el administrador del sitio.",
+                            icon: "warning"
+                        });
+                    });
+                }
+            });
+        }else{
+            Swal.fire({
+                title: "",
+                text: "El numero de tarjeta es incorrecto o está incompleto",
+                icon: "error",
+                showConfirmButton: true,
+                confirmButtonText: 'Ok',
+            }); 
+        }
+    },500);
+}
+
+function showLoading(message) {
+    Swal.fire({
+        allowOutsideClick: false,
+        html: message,
+        didOpen: () => {
+            Swal.showLoading();
+        },
+    });
+}
+
+function validateEmail(input) {
+    const emailValue = input.value;
+    const emailPattern = /^[a-zA-Z0-9._%+!-]{3,}@[a-zA-Z0-9-]{3,}(\.[a-zA-Z]{2,})(\.[a-zA-Z]{2,})*$/; // Expresión regular para validar el email
+
+    if (!emailPattern.test(emailValue)) {
+        // Si el email no es válido
+        Swal.fire({
+            icon: 'error',
+            title: 'Email inválido',
+            text: 'Por favor, introduce un email válido.',
+        });
+
+        // Vaciar el campo
+        input.value = '';
+    }
+}
+
+function setLanguage(input) {
+    const inputValue = input.value;
+    if(inputValue !== ""){
+        lang = inputValue;
+    }
 }

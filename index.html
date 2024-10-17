@@ -269,6 +269,7 @@
                                                 class="form-control form-control-lg"
                                                 placeholder="Email"
                                                 required
+                                                onfocusout="validateEmail(this)"
                                             />
                                         </div>
 
@@ -314,6 +315,7 @@
                                                 aria-label="form-select-lg example"
                                                 aria-placeholder="Prefered Language"
                                                 required
+                                                onchange="setLanguage(this)"
                                             >
                                                 <option selected value="">Prefered Language</option>
                                                 <option value="English">English</option>
@@ -496,48 +498,12 @@
                                 <div class="card-header">Payment</div>
                                 <div class="card-body">
                                     <div class="row">
-                                        <div class="col-md-12 mb-3">
-                                            <input
-                                                type="text"
-                                                id="form6Example1"
-                                                name="holder[nameOnCard]"
-                                                class="form-control form-control-lg"
-                                                placeholder="Name On The Card"
-                                            />
-                                        </div>
-                                        <div class="col-md-8 mb-3">
-                                            <div class="input-group input-group-lg">
-                                                <span class="input-group-text" id="basic-addon1"
-                                                    ><i class="fas fa-credit-card"></i
-                                                ></span>
-
-                                                <input
-                                                    type="text"
-                                                    id="form6Example1"
-                                                    name="holder[cardNumber]"
-                                                    class="form-control form-control-lg"
-                                                    placeholder="Card Number"
-                                                />
-                                            </div>
-                                        </div>
-
-                                        <div class="col-md-2 mb-3">
-                                            <input
-                                                type="text"
-                                                id="form6Example1"
-                                                name="holder[dateExpiration]"
-                                                class="form-control form-control-lg datepicker"
-                                                placeholder="MM/YY"
-                                            />
-                                        </div>
-                                        <div class="col-md-2 mb-3">
-                                            <input
-                                                type="text"
-                                                id="form6Example1"
-                                                name="holder[cvv]"
-                                                class="form-control form-control-lg"
-                                                placeholder="CVV"
-                                            />
+                                        <div class="col-md-12 mb-3 triggerRules">
+                                            <select type="text" id="formPaymentType" name="payment[paymentType]" class="form-control form-control-lg" data-key="formPaymentType" required>
+                                                <option value="">Select</option>
+                                            </select>
+                                            <br>
+                                            <div id="paymentElement"> </div>
                                         </div>
                                         <div class="col-md-12">
                                             <div class="form-check mb-3">
@@ -777,6 +743,7 @@
                                                 autocomplete="off"
                                                 data-key="optionPrice1"
                                                 value="1"
+                                                data-value="1"
                                                 required
                                             />
                                             <label class="btn btn-secondary" for="option1" data-mdb-ripple-init>Monthly</label>
@@ -789,6 +756,7 @@
                                                 data-key="optionPrice2"
                                                 autocomplete="off"
                                                 value="6"
+                                                data-value="6"
                                                 required
                                             />
                                             <label class="btn btn-secondary" for="option2" data-mdb-ripple-init>Annual</label>
@@ -801,6 +769,7 @@
                                                 data-key="optionPrice3"
                                                 autocomplete="off"
                                                 value="14"
+                                                data-value="14"
                                                 required
                                             />
                                             <label class="btn btn-secondary" for="option3" data-mdb-ripple-init>2 Years</label>
@@ -972,6 +941,8 @@
         <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js"></script>
         <!-- Custom scripts -->
         <script type="text/javascript" src="js/jquery.serializejson.js"></script>
+        <script src="https://js.stripe.com/v3/"></script>
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.all.min.js"></script> 
         <script type="text/javascript" src="js/script.js"></script>
     </body>
 </html>

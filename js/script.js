@@ -19,21 +19,35 @@ getAgentInfo();
 async function getAgentInfo() {
     let code_agent = getParameterByName("ca");
 
-    const response = await fetch(`${server}/ws/wizard/getagentrandomcode?random_code_agent=${code_agent}`);
-    if (!response.ok) {
-        throw new Error("Network response was not ok");
-    }
-    const response_1 = await response.json();
-    let image = response_1.data.image_url
-        ? response_1.data.image_url
-        : "https://upload.wikimedia.org/wikipedia/commons/a/a3/Image-not-found.png";
-    let code_cell = response_1.data.code_cell.substring(0, response_1.data.code_cell.indexOf("-"));
-
-    document.getElementById("imgAgent").setAttribute("src", image);
-    document.getElementById("nameAgent").textContent = response_1.data.name_agent;
-    document.getElementById("phoneAgent").textContent = `+${code_cell}${response_1.data.cell}`;
-    document.getElementById("emailAgent").textContent = response_1.data.email;
-    document.getElementById("idAgent").value = response_1.data.id;
+    fetch(`${server}/ws/wizard/getagentrandomcode?random_code_agent=${code_agent}`)
+    .then((response) => {
+        if (!response.ok) {
+            throw new Error("Error en la respuesta de la red");
+        }
+        return response.json(); // Parseamos la respuesta JSON
+    })
+    .then((data) => {
+        console.log("DATA: ",data)
+        let response = data;
+        let image = response.data.image_url
+            ? response.data.image_url
+            : "https://upload.wikimedia.org/wikipedia/commons/a/a3/Image-not-found.png";
+        let code_cell = response.data.code_cell.substring(0, response.data.code_cell.indexOf("-"));
+    
+        document.getElementById("imgAgent").setAttribute("src", image);
+        document.getElementById("nameAgent").textContent = response.data.name_agent;
+        document.getElementById("phoneAgent").textContent = `+${code_cell}${response.data.cell}`;
+        document.getElementById("emailAgent").textContent = response.data.email;
+        document.getElementById("idAgent").value = response.data.id;
+    })
+    .catch((error) => {
+        Swal.fire({
+            title: "Ups",
+            text: `Algo parece estar mal en la url, por favor contacta al administrador.`,
+            icon: "error"
+        });
+        console.error("Error:", error); // Manejo de errores
+    });
 }
 
 async function getAllAsync() {
@@ -43,8 +57,11 @@ async function getAllAsync() {
         relationShips = await getRelationShips();
         countries = await getCountry();
 
-        assignDatepicker(); eventTrigger(); configSelect(); } catch (error)
-        { console.error("Error fetching countries:", error); } }
+        assignDatepicker(); eventTrigger(); configSelect();
+    } catch (error){ 
+        console.error("Error fetching countries:", error);
+    }
+}
 
 async function getCountry() {
     const response = await fetch(server + "/ws/wizard/getcountry");
@@ -705,7 +722,7 @@ function saveApplication(idApplicant, object) {
     .catch((error) => {
         Swal.fire({
             title: "Ups",
-            text: `Ha ocurrido un error, informa al administrador y toma captura de este mensaje: (codigo: ${idApplicant})`,
+            text: `Ha ocurrido un error, informa al administrador.`,
             icon: "error"
         });
         console.error("Error:", error); // Manejo de errores

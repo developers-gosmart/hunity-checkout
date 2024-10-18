@@ -521,7 +521,7 @@ function addDependents() {
     let editArea = document.querySelector(".edit-area");
     let rowArea = document.querySelector(".row-area");
     totalShow = 1;
-    itemNumber = 1;
+    itemNumber = 2;
 
     if (!isEventBound) {
         document.addEventListener("click", function (event) {

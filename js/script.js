@@ -11,7 +11,7 @@ let selectedPlanId = 0;
 let isEventBound = false;
 
 let stripe, elements, isCompletePaymentElement;
-let lang = "Spanish";
+let lang = "English";
 
 getAllAsync();
 getAgentInfo();
@@ -43,7 +43,10 @@ async function getAgentInfo() {
     .catch((error) => {
         Swal.fire({
             title: "Ups",
-            text: `Algo parece estar mal en la url, por favor contacta al administrador.`,
+            text: 
+                lang == "Spanish" 
+                ? `Algo parece estar mal en la url, por favor contacta al administrador.`
+                : `Something seems wrong with the url, please contact the administrator.`,
             icon: "error"
         });
         console.error("Error:", error); // Manejo de errores
@@ -721,8 +724,14 @@ function saveApplication(idApplicant, object) {
     })
     .catch((error) => {
         Swal.fire({
-            title: "Ups",
-            text: `Ha ocurrido un error, informa al administrador.`,
+            title: 
+                lang == "Spanish"
+                ? "Ocurrió un error!"
+                : "An error occurred!",
+            text: 
+                lang == "Spanish"
+                ? "Vuelve a intentarlo mas tarde ó comunícate con el administrador del sitio."
+                : "Try again later or contact the site administrator.",
             icon: "error"
         });
         console.error("Error:", error); // Manejo de errores
@@ -828,7 +837,11 @@ function initStripe(type, affected) {
 }
 
 function stripePayment(applicant) {
-    showLoading("Por favor espere..!");
+    showLoading(
+        lang == "Spanish"
+        ? "Por favor espere..!"
+        : "Please wait..!"
+    );
     setTimeout(function(){
         if(isCompletePaymentElement){
             stripe
@@ -918,7 +931,11 @@ function stripePayment(applicant) {
                                 }
                             });
                         }else if(data.code == 200){
-                            showLoading("Pago realizado correctamente, por favor espere un poco mas..!");
+                            showLoading(
+                                lang == "Spanish" 
+                                ? "Pago realizado correctamente, por favor espere un poco mas..!" 
+                                : "Payment made correctly, please wait a little longer..!"
+                            );
                             //PAGO EXITOSO, ENTONCES LLAMAR A LA FUNCION PARA GUARDAR EL FORMULARIO COMPLETO
                             saveApplication(data.idApplicant, data.object);
                         }
@@ -927,8 +944,14 @@ function stripePayment(applicant) {
                         console.error('Error:', error); // Maneja el error
 
                         Swal.fire({
-                            title: "Ocurrió un error!",
-                            text: "Vuelve a intentarlo mas tarde ó comunícate con el administrador del sitio.",
+                            title: 
+                                lang == "Spanish"
+                                ? "Ocurrió un error!"
+                                : "An error occurred!",
+                            text: 
+                                lang == "Spanish"
+                                ? "Vuelve a intentarlo mas tarde ó comunícate con el administrador del sitio."
+                                : "Try again later or contact the site administrator.",
                             icon: "warning"
                         });
                     });
@@ -937,7 +960,10 @@ function stripePayment(applicant) {
         }else{
             Swal.fire({
                 title: "",
-                text: "El numero de tarjeta es incorrecto o está incompleto",
+                text: 
+                    lang == "Spanish" 
+                    ? "El numero de tarjeta es incorrecto o está incompleto"
+                    : "The card number is incorrect or incomplete",
                 icon: "error",
                 showConfirmButton: true,
                 confirmButtonText: 'Ok',
